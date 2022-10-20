@@ -2,56 +2,100 @@
 ## Data Mining Assignment 2 ##
 # Classification for the Detection of Opinion Spam #
 
-library(tm)
-library(glmnet)
-library(naivebayes)
-library(rpart)
-library(randomForest)
+# Packages and functions --------------------------------------------------
+
+library(tm)            # basic text mining operations 
+library(SnowballC)     # dependency for stemming
+library(naivebayes)    # multinomial naive bayes
+library(glmnet)        # lasso regression
+library(rpart)         # class. trees
+library(randomForest)  # random forests
+
+# function to return unigrams and bigrams of a document
+get_unibigrams <- function(x) {
+  ngrams <- ngrams(words(x), 1:2)
+  return(unlist(lapply(ngrams, paste, collapse = " "), 
+                use.names = FALSE))
+}
 
 # Data pre-processing -----------------------------------------------------
-data_path <- "C:/Users/chw/OneDrive/Utrecht/sem03/data_mining/assignment2/data/"
 
+# Read data and make it a VCorpus object
+files_all <- list.files(path = "data",
+                        recursive = TRUE,
+                        pattern = ".txt",
+                        full.names = TRUE)
 
-files_decep <- list.files(path = paste0(data_path, "deceptive_from_MTurk"),
-                          recursive = TRUE,
-                          pattern = ".txt",
-                          full.names = TRUE)
-files_true <- list.files(path = paste0(data_path, "truthful_from_Web"),
-                         recursive = TRUE,
-                         pattern = ".txt",
-                         full.names = TRUE)
+revs_all <- sapply(files_all, function(x) readLines(x))
+revs_all <- VCorpus(VectorSource(revs_all))
 
-revs_decep <- sapply(files_decep, function(x) readLines(x))
-revs_decep <- VCorpus(VectorSource(revs_decep))
-
-revs_true <- sapply(files_true, function(x) readLines(x))
-revs_true <- VCorpus(VectorSource(revs_true))
-
-revs_all <- c(revs_decep, revs_true)
-
-# Remove punctuation marks (comma’s, etc.)
+# Pre-processing of text
 revs_all <- tm_map(revs_all, removePunctuation)
-# Make all letters lower case
 revs_all <- tm_map(revs_all, content_transformer(tolower)) 
-# Remove stopwords
 revs_all <- tm_map(revs_all, removeWords, stopwords("english"))
-# Remove numbers
 revs_all <- tm_map(revs_all, removeNumbers)
-# Remove excess whitespace
 revs_all <- tm_map(revs_all, stripWhitespace)
+revs_all <- tm_map(revs_all, stemDocument)
 
-# more editing???
-#- stemming?
+# Create label vector (0=deceptive, 1=truthful)
+labels <- c(rep(0, 400), rep(1, 400))
 
-# make dtm, split into train and test
+# Define training corpus: folds 1-4 of both deceptive and true reviews
+index_train <- c(1:320, 401:720)
+index_test <- c(1:800)[-index_train]
 
-# remove sparse terms (if enough left after stemming), find percentage that works
+# Create document term matrix (dtm)
+dtm_train <- DocumentTermMatrix(revs_all[index_train])
+dtm_train # -> 4.9k features, 99% sparsity
+
+# Remove sparse terms
+dtm_train <- removeSparseTerms(dtm_train, .95)
+dtm_train # -> 321 features, 88% sparsity
+
+# Create dtm for test set 
+dtm_test <- DocumentTermMatrix(revs_all[index_test],
+                               # (has same features as dtm_train)
+                               list(dictionary = dimnames(dtm_train)[[2]]))
+
+# Repeat steps above including bigrams 
+dtm2_train <- DocumentTermMatrix(revs_all[index_train],
+                                 control = list(tokenize = get_unibigrams))
+dtm2_train # -> 45k features, 100% sparsity
+
+dtm2_train <- removeSparseTerms(dtm2_train, .95)
+dtm2_train # -> 338 features, 88% sparsity
+
+dtm2_test <- DocumentTermMatrix(revs_all[index_test],
+                                list(dictionary = dimnames(dtm2_train)[[2]]))
 
 # Modeling ----------------------------------------------------------------
 # Try 4 different approaches below, each with and without bigram features
 # -> 8 final models to be compared
 
 ## Multinomial naive Bayes (generative linear classifier)------------------
+### Only unigrams
+
+mnb_train <- multinomial_naive_bayes(x = as.matrix(dtm_train), 
+                                     y = as.factor(labels[index_train]))
+
+mnb_predict <- predict(mnb_train, as.matrix(dtm_test))
+
+conf_mat_mnb <- table(mnb_predict, labels[index_test])
+sum(diag(conf_mat_mnb))/length(index_test) # -> 80% accuracy
+
+# get top five features (based on Mutual Information, entropy..., slide 42 ff)
+
+### With bigrams
+
+mnb2_train <- multinomial_naive_bayes(x = as.matrix(dtm2_train), 
+                                      y = as.factor(labels[index_train]))
+
+mnb2_predict <- predict(mnb2_train, as.matrix(dtm2_test))
+
+conf_mat_mnb2 <- table(mnb2_predict, labels[index_test])
+sum(diag(conf_mat_mnb2))/length(index_test) # -> 80% accuracy, same conf. mat.
+
+# get top five features (based on Mutual Information, entropy..., slide 42 ff)
 
 
 ## LASSO logistic regression (discriminative linear classifier)------------
