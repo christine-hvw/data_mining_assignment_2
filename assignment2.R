@@ -126,10 +126,65 @@ sum(diag(conf_mat_lasso2))/length(index_test) # -> 76.25% accuracy
 
 
 ## Classification trees (non-linear classifier)----------------------------
+### Unigrams
+tree_full <- rpart(label ~.,
+                   data = data.frame(as.matrix(dtm_train),
+                                     label = labels[index_train]),
+                   cp = 0, method = "class")
 
+# plot CV error of pruning sequence
+plotcp(tree_full)
+printcp(tree_full)
+
+# prune tree at lowest CV error (11 splits)
+tree_pruned <- prune(tree_full, cp = 0.009375)
+plotcp(tree_pruned)
+
+tree_predict <- predict(tree_pruned, newdata = data.frame(as.matrix(dtm_test)), 
+                        type = "class")
+
+conf_mat_tree <- table(tree_predict, labels[index_test])
+sum(diag(conf_mat_tree))/length(index_test) # -> 66.88% accuracy
+
+### Bigrams
+tree2_full <- rpart(label ~.,
+                    data = data.frame(as.matrix(dtm2_train),
+                                      label = labels[index_train]),
+                    cp = 0, method = "class")
+
+printcp(tree2_full)
+
+# prune tree at lowest CV error (1 split)
+tree2_pruned <- prune(tree2_full, cp = 0.0250)
+
+tree2_predict <- predict(tree2_pruned, newdata = data.frame(as.matrix(dtm2_test)), 
+                         type = "class")
+
+conf_mat_tree2 <- table(tree2_predict, labels[index_test])
+sum(diag(conf_mat_tree2))/length(index_test) # -> 64.38% accuracy
 
 ## Random forest (ensemble of non-linear classifiers)----------------------
+### Unigrams
 
+rf_train <- randomForest(as.factor(label) ~.,
+                         data = data.frame(as.matrix(dtm_train),
+                                           label = labels[index_train]))
+
+rf_predict <- predict(rf_train, newdata = data.frame(as.matrix(dtm_test)))
+
+conf_mat_rf <- table(rf_predict, labels[index_test])
+sum(diag(conf_mat_rf))/length(index_test) # -> 80% accuracy
+
+### Bigrams
+
+rf2_train <- randomForest(as.factor(label) ~.,
+                          data = data.frame(as.matrix(dtm2_train),
+                                            label = labels[index_train]))
+
+rf2_predict <- predict(rf2_train, newdata = data.frame(as.matrix(dtm2_test)))
+
+conf_mat_rf2 <- table(rf2_predict, labels[index_test])
+sum(diag(conf_mat_rf2))/length(index_test) # -> 78.75% accuracy
 
 
 # Model comparison --------------------------------------------------------
