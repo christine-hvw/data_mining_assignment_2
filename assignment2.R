@@ -99,6 +99,30 @@ sum(diag(conf_mat_mnb2))/length(index_test) # -> 80% accuracy, same conf. mat.
 
 
 ## LASSO logistic regression (discriminative linear classifier)------------
+### Unigrams
+
+lasso_train <- cv.glmnet(x = as.matrix(dtm_train),
+                         y = labels[index_train],
+                         family = "binomial", type.measure = "class")
+#plot(lasso_train)
+
+lasso_predict <- predict(lasso_train, newx = as.matrix(dtm_test), 
+                         s = "lambda.1se", type = "class")
+
+conf_mat_lasso <- table(lasso_predict, labels[index_test])
+sum(diag(conf_mat_lasso))/length(index_test) # -> 77.5% accuracy
+
+### Bigrams
+
+lasso2_train <- cv.glmnet(x = as.matrix(dtm2_train),
+                          y = labels[index_train],
+                          family = "binomial", type.measure = "class")
+
+lasso2_predict <- predict(lasso2_train, newx = as.matrix(dtm2_test), 
+                          s = "lambda.1se", type = "class")
+
+conf_mat_lasso2 <- table(lasso2_predict, labels[index_test])
+sum(diag(conf_mat_lasso2))/length(index_test) # -> 76.25% accuracy
 
 
 ## Classification trees (non-linear classifier)----------------------------
