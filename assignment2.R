@@ -6,6 +6,7 @@
 
 library(tm)            # basic text mining operations 
 library(SnowballC)     # dependency for stemming
+library(caret)         # modeling workflow
 library(naivebayes)    # multinomial naive bayes
 library(glmnet)        # lasso regression
 library(rpart)         # class. trees
@@ -40,32 +41,32 @@ revs_all <- tm_map(revs_all, stemDocument)
 # Create label vector (0=deceptive, 1=truthful)
 labels <- c(rep(0, 400), rep(1, 400))
 
-# Define training corpus: folds 1-4 of both deceptive and true reviews
-index_train <- c(1:320, 401:720)
-index_test <- c(1:800)[-index_train]
+# Data partitioning
+set.seed(123)
+train_partition <- createDataPartition(labels, p = 0.8, list = FALSE)
 
 # Create document term matrix (dtm)
-dtm_train <- DocumentTermMatrix(revs_all[index_train])
+dtm_train <- DocumentTermMatrix(revs_all[train_partition])
 dtm_train # -> 4.9k features, 99% sparsity
 
 # Remove sparse terms
 dtm_train <- removeSparseTerms(dtm_train, .95)
-dtm_train # -> 321 features, 88% sparsity
+dtm_train # -> 300 features, 87% sparsity
 
 # Create dtm for test set 
-dtm_test <- DocumentTermMatrix(revs_all[index_test],
+dtm_test <- DocumentTermMatrix(revs_all[-train_partition],
                                # (has same features as dtm_train)
                                list(dictionary = dimnames(dtm_train)[[2]]))
 
 # Repeat steps above including bigrams 
-dtm2_train <- DocumentTermMatrix(revs_all[index_train],
+dtm2_train <- DocumentTermMatrix(revs_all[train_partition],
                                  control = list(tokenize = get_unibigrams))
 dtm2_train # -> 45k features, 100% sparsity
 
 dtm2_train <- removeSparseTerms(dtm2_train, .95)
-dtm2_train # -> 338 features, 88% sparsity
+dtm2_train # -> 316 features, 88% sparsity
 
-dtm2_test <- DocumentTermMatrix(revs_all[index_test],
+dtm2_test <- DocumentTermMatrix(revs_all[-train_partition],
                                 list(dictionary = dimnames(dtm2_train)[[2]]))
 
 # Modeling ----------------------------------------------------------------
@@ -73,119 +74,130 @@ dtm2_test <- DocumentTermMatrix(revs_all[index_test],
 # -> 8 final models to be compared
 
 ## Multinomial naive Bayes (generative linear classifier)------------------
+# hyperparameters: - laplace smoothing, value not very important tho, standard = 1
+# - number of features used (if feature selection is performed)
+
 ### Only unigrams
 
 mnb_train <- multinomial_naive_bayes(x = as.matrix(dtm_train), 
-                                     y = as.factor(labels[index_train]))
+                                     y = as.factor(labels[train_partition]),
+                                     laplace = 1)
 
 mnb_predict <- predict(mnb_train, as.matrix(dtm_test))
 
-conf_mat_mnb <- table(mnb_predict, labels[index_test])
-sum(diag(conf_mat_mnb))/length(index_test) # -> 80% accuracy
+confusionMatrix(as.factor(mnb_predict), as.factor(labels[-train_partition]),
+                mode = "everything")
 
 # get top five features (based on Mutual Information, entropy..., slide 42 ff)
 
 ### With bigrams
 
 mnb2_train <- multinomial_naive_bayes(x = as.matrix(dtm2_train), 
-                                      y = as.factor(labels[index_train]))
+                                      y = as.factor(labels[train_partition]),
+                                      laplace = 1)
 
 mnb2_predict <- predict(mnb2_train, as.matrix(dtm2_test))
 
-conf_mat_mnb2 <- table(mnb2_predict, labels[index_test])
-sum(diag(conf_mat_mnb2))/length(index_test) # -> 80% accuracy, same conf. mat.
+confusionMatrix(as.factor(mnb2_predict), as.factor(labels[-train_partition]),
+                mode = "everything")
 
 # get top five features (based on Mutual Information, entropy..., slide 42 ff)
 
 
 ## LASSO logistic regression (discriminative linear classifier)------------
+# hyperparameters: - alpha = 1 (lasso penalty), - lambda
+
 ### Unigrams
 
+set.seed(123)
 lasso_train <- cv.glmnet(x = as.matrix(dtm_train),
-                         y = labels[index_train],
-                         family = "binomial", type.measure = "class")
+                         y = labels[train_partition],
+                         family = "binomial", type.measure = "class", nfolds = 10)
 #plot(lasso_train)
 
 lasso_predict <- predict(lasso_train, newx = as.matrix(dtm_test), 
                          s = "lambda.1se", type = "class")
 
-conf_mat_lasso <- table(lasso_predict, labels[index_test])
-sum(diag(conf_mat_lasso))/length(index_test) # -> 77.5% accuracy
+confusionMatrix(as.factor(lasso_predict), as.factor(labels[-train_partition]),
+                mode = "everything")
 
 ### Bigrams
 
 lasso2_train <- cv.glmnet(x = as.matrix(dtm2_train),
-                          y = labels[index_train],
-                          family = "binomial", type.measure = "class")
+                          y = labels[train_partition],
+                          family = "binomial", type.measure = "class", nfolds = 10)
 
 lasso2_predict <- predict(lasso2_train, newx = as.matrix(dtm2_test), 
                           s = "lambda.1se", type = "class")
 
-conf_mat_lasso2 <- table(lasso2_predict, labels[index_test])
-sum(diag(conf_mat_lasso2))/length(index_test) # -> 76.25% accuracy
-
+confusionMatrix(as.factor(lasso2_predict), as.factor(labels[-train_partition]),
+                mode = "everything")
 
 ## Classification trees (non-linear classifier)----------------------------
+# hyperparameters: - complexity (cp) (minsplit? set to 20 by default and not listed by caret)
+
 ### Unigrams
-tree_full <- rpart(label ~.,
-                   data = data.frame(as.matrix(dtm_train),
-                                     label = labels[index_train]),
-                   cp = 0, method = "class")
 
-# plot CV error of pruning sequence
-plotcp(tree_full)
-printcp(tree_full)
+set.seed(123)
+tree_train <- train(x = as.matrix(dtm_train),
+                    y = as.factor(labels[train_partition]),
+                    method = "rpart",
+                    trControl = trainControl(method = "cv", number = 10, search = "random"),
+                    tuneLength = 100)
 
-# prune tree at lowest CV error (11 splits)
-tree_pruned <- prune(tree_full, cp = 0.009375)
-plotcp(tree_pruned)
+tree_predict <- predict(tree_train, as.matrix(dtm_test))
 
-tree_predict <- predict(tree_pruned, newdata = data.frame(as.matrix(dtm_test)), 
-                        type = "class")
-
-conf_mat_tree <- table(tree_predict, labels[index_test])
-sum(diag(conf_mat_tree))/length(index_test) # -> 66.88% accuracy
+confusionMatrix(as.factor(tree_predict), as.factor(labels[-train_partition]),
+                mode = "everything")
 
 ### Bigrams
-tree2_full <- rpart(label ~.,
-                    data = data.frame(as.matrix(dtm2_train),
-                                      label = labels[index_train]),
-                    cp = 0, method = "class")
 
-printcp(tree2_full)
+set.seed(123)
+tree2_train <- train(x = as.matrix(dtm2_train),
+                     y = as.factor(labels[train_partition]),
+                     method = "rpart",
+                     trControl = trainControl(method = "cv", number = 10, search = "random"),
+                     tuneLength = 100)
 
-# prune tree at lowest CV error (1 split)
-tree2_pruned <- prune(tree2_full, cp = 0.0250)
+tree2_predict <- predict(tree2_train, as.matrix(dtm2_test))
 
-tree2_predict <- predict(tree2_pruned, newdata = data.frame(as.matrix(dtm2_test)), 
-                         type = "class")
+confusionMatrix(as.factor(tree2_predict), as.factor(labels[-train_partition]),
+                mode = "everything")
 
-conf_mat_tree2 <- table(tree2_predict, labels[index_test])
-sum(diag(conf_mat_tree2))/length(index_test) # -> 64.38% accuracy
 
 ## Random forest (ensemble of non-linear classifiers)----------------------
+# hyperparameters: - numbers of parameters to sample from (mtry), 
+# - number of trees (ntree) (not in caret, need to loop over ntree)
+# 
 ### Unigrams
 
-rf_train <- randomForest(as.factor(label) ~.,
-                         data = data.frame(as.matrix(dtm_train),
-                                           label = labels[index_train]))
+mtry_grid <- data.frame(mtry = seq(from = 5, to = 20, by = 5))
 
-rf_predict <- predict(rf_train, newdata = data.frame(as.matrix(dtm_test)))
+set.seed(123)
+rf_train <- train(x = as.matrix(dtm_train),
+                  y = as.factor(labels[train_partition]),
+                  method = "rf",
+                  trControl = trainControl(method = "cv", number = 10),
+                  tuneGrid = mtry_grid)
 
-conf_mat_rf <- table(rf_predict, labels[index_test])
-sum(diag(conf_mat_rf))/length(index_test) # -> 80% accuracy
+rf_predict <- predict(rf_train, as.matrix(dtm_test))
+
+confusionMatrix(as.factor(rf_predict), as.factor(labels[-train_partition]),
+                mode = "everything")
 
 ### Bigrams
 
-rf2_train <- randomForest(as.factor(label) ~.,
-                          data = data.frame(as.matrix(dtm2_train),
-                                            label = labels[index_train]))
+set.seed(123)
+rf2_train <- train(x = as.matrix(dtm2_train),
+                   y = as.factor(labels[train_partition]),
+                   method = "rf",
+                   trControl = trainControl(method = "cv", number = 10),
+                   tuneGrid = mtry_grid)
 
-rf2_predict <- predict(rf2_train, newdata = data.frame(as.matrix(dtm2_test)))
+rf2_predict <- predict(rf2_train, as.matrix(dtm2_test))
 
-conf_mat_rf2 <- table(rf2_predict, labels[index_test])
-sum(diag(conf_mat_rf2))/length(index_test) # -> 78.75% accuracy
-
+confusionMatrix(as.factor(rf2_predict), as.factor(labels[-train_partition]),
+                mode = "everything")
 
 # Model comparison --------------------------------------------------------
 
