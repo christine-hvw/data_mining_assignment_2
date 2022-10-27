@@ -147,8 +147,12 @@ mnb_train <- multinomial_naive_bayes(x = as.matrix(dtm_train),
 
 mnb_predict <- predict(mnb_train, as.matrix(dtm_test))
 
-confusionMatrix(as.factor(mnb_predict), as.factor(labels[-train_partition]),
-                mode = "everything")
+cat("MNB Unigrams",
+    capture.output(
+      confusionMatrix(as.factor(mnb_predict), as.factor(labels[-train_partition]),
+                      mode = "everything")),
+    file = "results/results.txt", sep = "\n", append = TRUE)
+
 
 # get top five features (based on Mutual Information, entropy..., slide 42 ff)
 
@@ -160,8 +164,11 @@ mnb2_train <- multinomial_naive_bayes(x = as.matrix(dtm2_train),
 
 mnb2_predict <- predict(mnb2_train, as.matrix(dtm2_test))
 
-confusionMatrix(as.factor(mnb2_predict), as.factor(labels[-train_partition]),
-                mode = "everything")
+cat("MNB Bigrams",
+    capture.output(
+      confusionMatrix(as.factor(mnb2_predict), as.factor(labels[-train_partition]),
+                      mode = "everything")),
+    file = "results/results.txt", sep = "\n", append = TRUE)
 
 # get top five features (based on Mutual Information, entropy..., slide 42 ff)
 
@@ -180,8 +187,11 @@ lasso_train <- cv.glmnet(x = as.matrix(dtm_train),
 lasso_predict <- predict(lasso_train, newx = as.matrix(dtm_test), 
                          s = "lambda.1se", type = "class")
 
-confusionMatrix(as.factor(lasso_predict), as.factor(labels[-train_partition]),
-                mode = "everything")
+cat("LASSO Unigrams",
+    capture.output(
+      confusionMatrix(as.factor(lasso_predict), as.factor(labels[-train_partition]),
+                      mode = "everything")),
+    file = "results/results.txt", sep = "\n", append = TRUE)
 
 ### Bigrams
 
@@ -192,8 +202,13 @@ lasso2_train <- cv.glmnet(x = as.matrix(dtm2_train),
 lasso2_predict <- predict(lasso2_train, newx = as.matrix(dtm2_test), 
                           s = "lambda.1se", type = "class")
 
-confusionMatrix(as.factor(lasso2_predict), as.factor(labels[-train_partition]),
-                mode = "everything")
+cat("LASSO Bigrams",
+    capture.output(
+      confusionMatrix(as.factor(lasso2_predict), as.factor(labels[-train_partition]),
+                      mode = "everything")),
+    file = "results/results.txt", sep = "\n", append = TRUE)
+
+
 
 ## Classification trees (non-linear classifier)----------------------------
 # hyperparameters: - complexity (cp)
@@ -209,8 +224,11 @@ tree_train <- train(x = as.matrix(dtm_train),
 
 tree_predict <- predict(tree_train, as.matrix(dtm_test))
 
-confusionMatrix(as.factor(tree_predict), as.factor(labels[-train_partition]),
-                mode = "everything")
+cat("Tree Unigrams",
+    capture.output(
+      confusionMatrix(as.factor(tree_predict), as.factor(labels[-train_partition]),
+                      mode = "everything")),
+    file = "results/results.txt", sep = "\n", append = TRUE)
 
 ### Bigrams
 
@@ -223,8 +241,11 @@ tree2_train <- train(x = as.matrix(dtm2_train),
 
 tree2_predict <- predict(tree2_train, as.matrix(dtm2_test))
 
-confusionMatrix(as.factor(tree2_predict), as.factor(labels[-train_partition]),
-                mode = "everything")
+cat("Tree Bigrams",
+    capture.output(
+      confusionMatrix(as.factor(tree2_predict), as.factor(labels[-train_partition]),
+                      mode = "everything")),
+    file = "results/results.txt", sep = "\n", append = TRUE)
 
 
 ## Random forest (ensemble of non-linear classifiers)----------------------
@@ -245,8 +266,11 @@ rf_train <- train(x = as.matrix(dtm_train),
 
 rf_predict <- predict(rf_train, as.matrix(dtm_test))
 
-confusionMatrix(as.factor(rf_predict), as.factor(labels[-train_partition]),
-                mode = "everything")
+cat("Forest Unigrams",
+    capture.output(
+      confusionMatrix(as.factor(rf_predict), as.factor(labels[-train_partition]),
+                      mode = "everything")),
+    file = "results/results.txt", sep = "\n", append = TRUE)
 
 ### Bigrams
 
@@ -259,8 +283,12 @@ rf2_train <- train(x = as.matrix(dtm2_train),
 
 rf2_predict <- predict(rf2_train, as.matrix(dtm2_test))
 
-confusionMatrix(as.factor(rf2_predict), as.factor(labels[-train_partition]),
-                mode = "everything")
+cat("Forest Bigrams",
+    capture.output(
+      confusionMatrix(as.factor(rf2_predict), as.factor(labels[-train_partition]),
+                      mode = "everything")),
+    file = "results/results.txt", sep = "\n", append = TRUE)
+
 
 # Model comparison --------------------------------------------------------
 
