@@ -5,12 +5,19 @@
 # Packages and functions --------------------------------------------------
 
 library(tm)            # basic text mining operations 
+library(udpipe)
 library(SnowballC)     # dependency for stemming
 library(caret)         # modeling workflow
 library(naivebayes)    # multinomial naive bayes
 library(glmnet)        # lasso regression
 library(rpart)         # class. trees
 library(randomForest)  # random forests
+
+# function to perform lemmatization with tm
+get_lemmas <- function(x) {
+  lemmas <- udpipe(words(x), "english")[["lemma"]]
+  paste(lemmas, collapse = " ")
+}
 
 # function to return unigrams and bigrams of a document
 get_unibigrams <- function(x) {
@@ -35,7 +42,8 @@ revs_all <- tm_map(revs_all, removePunctuation)
 revs_all <- tm_map(revs_all, content_transformer(tolower)) 
 revs_all <- tm_map(revs_all, removeWords, stopwords("english"))
 revs_all <- tm_map(revs_all, removeNumbers)
-revs_all <- tm_map(revs_all, stripWhitespace)
+revs_all <- tm_map(revs_all, stripWhitespace) 
+revs_all <- tm_map(revs_all, content_transformer(get_lemmas)) # can take a minute
 revs_all <- tm_map(revs_all, stemDocument)
 
 # Create label vector (0=deceptive, 1=truthful)
@@ -50,8 +58,8 @@ dtm_train <- DocumentTermMatrix(revs_all[train_partition])
 dtm_train # -> 4.9k features, 99% sparsity
 
 # Remove sparse terms
-dtm_train <- removeSparseTerms(dtm_train, .95)
-dtm_train # -> 300 features, 87% sparsity
+dtm_train <- removeSparseTerms(dtm_train, .99)
+dtm_train # -> 1042 features, 95% sparsity
 
 # Create dtm for test set 
 dtm_test <- DocumentTermMatrix(revs_all[-train_partition],
@@ -59,12 +67,14 @@ dtm_test <- DocumentTermMatrix(revs_all[-train_partition],
                                list(dictionary = dimnames(dtm_train)[[2]]))
 
 # Repeat steps above including bigrams 
+# remove sparse terms before creating bigrams
 dtm2_train <- DocumentTermMatrix(revs_all[train_partition],
                                  control = list(tokenize = get_unibigrams))
-dtm2_train # -> 45k features, 100% sparsity
+dtm2_train # -> 44k features, 100% sparsity
 
-dtm2_train <- removeSparseTerms(dtm2_train, .95)
-dtm2_train # -> 316 features, 88% sparsity
+# try to set to .99 percent -> make extra training set
+dtm2_train <- removeSparseTerms(dtm2_train, .99)
+dtm2_train # -> 1530 features, 96% sparsity
 
 dtm2_test <- DocumentTermMatrix(revs_all[-train_partition],
                                 list(dictionary = dimnames(dtm2_train)[[2]]))
@@ -74,11 +84,12 @@ dtm2_test <- DocumentTermMatrix(revs_all[-train_partition],
 # -> 8 final models to be compared
 
 ## Multinomial naive Bayes (generative linear classifier)------------------
-# hyperparameters: - laplace smoothing, value not very important tho, standard = 1
+# hyperparameters: - laplace smoothing
 # - number of features used (if feature selection is performed)
 
 ### Only unigrams
 
+# try values between 0 and 1 and cross-validate
 mnb_train <- multinomial_naive_bayes(x = as.matrix(dtm_train), 
                                      y = as.factor(labels[train_partition]),
                                      laplace = 1)
@@ -134,7 +145,7 @@ confusionMatrix(as.factor(lasso2_predict), as.factor(labels[-train_partition]),
                 mode = "everything")
 
 ## Classification trees (non-linear classifier)----------------------------
-# hyperparameters: - complexity (cp) (minsplit? set to 20 by default and not listed by caret)
+# hyperparameters: - complexity (cp)
 
 ### Unigrams
 
@@ -171,6 +182,7 @@ confusionMatrix(as.factor(tree2_predict), as.factor(labels[-train_partition]),
 # 
 ### Unigrams
 
+# try adaptive random sampling for ntree
 mtry_grid <- data.frame(mtry = seq(from = 5, to = 20, by = 5))
 
 set.seed(123)
