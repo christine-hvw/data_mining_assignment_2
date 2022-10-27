@@ -5,9 +5,10 @@
 # Packages and functions --------------------------------------------------
 
 library(tm)            # basic text mining operations 
-library(udpipe)
+library(udpipe)        # lemmatization
 library(SnowballC)     # dependency for stemming
 library(caret)         # modeling workflow
+library(modelr)        # modelling outside of caret
 library(naivebayes)    # multinomial naive bayes
 library(glmnet)        # lasso regression
 library(rpart)         # class. trees
@@ -87,12 +88,62 @@ dtm2_test <- DocumentTermMatrix(revs_all[-train_partition],
 # hyperparameters: - laplace smoothing
 # - number of features used (if feature selection is performed)
 
-### Only unigrams
 
-# try values between 0 and 1 and cross-validate
+### Hyperparameter tuning -------------------------------------------------
+
+set.seed(123)
+cv_folds <- crossv_kfold(data.frame(as.matrix(dtm_train)), k = 10)
+
+laplace_vals <- seq(0.1, 1, by = 0.1)
+
+# Training
+models <- list()
+
+models <- lapply(cv_folds$train, function(fold) {
+  lapply(laplace_vals, function(l) {
+    multinomial_naive_bayes(x = as.matrix(fold$data[fold$idx,]), 
+                            y = as.factor(labels[fold$idx]),
+                            laplace = l)
+  })
+})
+
+# Testing
+predictions <- list()
+
+predictions <- lapply(models, function(m) {
+  lapply(1:length(laplace_vals), function(l) {
+    predict(m[[l]], as.matrix(as.data.frame(cv_folds$test[[l]])))
+  })
+})
+
+accuracies <- list()
+
+accuracies <- lapply(1:length(predictions), function(fold) {
+  lapply(1:length(laplace_vals), function(l) {
+    mean(predictions[[fold]][[l]] == labels[cv_folds$test[[fold]][["idx"]]])
+  })
+})
+
+# Average accuracy per Laplace value over folds 
+ave_accuracies <- rowMeans(
+  # bind sub-lists into one data frame
+  do.call("rbind", 
+          # make sub-lists into data frame columns
+          lapply(accuracies, function(x) do.call("cbind", x))
+  )
+)
+
+# identify best value for Laplace smoothing parameter 
+best_laplace <- laplace_vals[ave_accuracies == max(ave_accuracies)]
+
+
+### Model training and validation -----------------------------------------
+
+#### Only unigrams
+
 mnb_train <- multinomial_naive_bayes(x = as.matrix(dtm_train), 
                                      y = as.factor(labels[train_partition]),
-                                     laplace = 1)
+                                     laplace = best_laplace)
 
 mnb_predict <- predict(mnb_train, as.matrix(dtm_test))
 
@@ -101,11 +152,11 @@ confusionMatrix(as.factor(mnb_predict), as.factor(labels[-train_partition]),
 
 # get top five features (based on Mutual Information, entropy..., slide 42 ff)
 
-### With bigrams
+#### With bigrams
 
 mnb2_train <- multinomial_naive_bayes(x = as.matrix(dtm2_train), 
                                       y = as.factor(labels[train_partition]),
-                                      laplace = 1)
+                                      laplace = best_laplace)
 
 mnb2_predict <- predict(mnb2_train, as.matrix(dtm2_test))
 
