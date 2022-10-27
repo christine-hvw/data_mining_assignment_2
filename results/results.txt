@@ -1,0 +1,248 @@
+MNB Unigrams
+Confusion Matrix and Statistics
+
+          Reference
+Prediction  0  1
+         0 74 14
+         1  6 66
+                                          
+               Accuracy : 0.875           
+                 95% CI : (0.8136, 0.9219)
+    No Information Rate : 0.5             
+    P-Value [Acc > NIR] : <2e-16          
+                                          
+                  Kappa : 0.75            
+                                          
+ Mcnemar's Test P-Value : 0.1175          
+                                          
+            Sensitivity : 0.9250          
+            Specificity : 0.8250          
+         Pos Pred Value : 0.8409          
+         Neg Pred Value : 0.9167          
+              Precision : 0.8409          
+                 Recall : 0.9250          
+                     F1 : 0.8810          
+             Prevalence : 0.5000          
+         Detection Rate : 0.4625          
+   Detection Prevalence : 0.5500          
+      Balanced Accuracy : 0.8750          
+                                          
+       'Positive' Class : 0               
+                                          
+MNB Bigrams
+Confusion Matrix and Statistics
+
+          Reference
+Prediction  0  1
+         0 65  9
+         1 15 71
+                                          
+               Accuracy : 0.85            
+                 95% CI : (0.7851, 0.9015)
+    No Information Rate : 0.5             
+    P-Value [Acc > NIR] : <2e-16          
+                                          
+                  Kappa : 0.7             
+                                          
+ Mcnemar's Test P-Value : 0.3074          
+                                          
+            Sensitivity : 0.8125          
+            Specificity : 0.8875          
+         Pos Pred Value : 0.8784          
+         Neg Pred Value : 0.8256          
+              Precision : 0.8784          
+                 Recall : 0.8125          
+                     F1 : 0.8442          
+             Prevalence : 0.5000          
+         Detection Rate : 0.4062          
+   Detection Prevalence : 0.4625          
+      Balanced Accuracy : 0.8500          
+                                          
+       'Positive' Class : 0               
+                                          
+LASSO Unigrams
+Confusion Matrix and Statistics
+
+          Reference
+Prediction  0  1
+         0 68 17
+         1 12 63
+                                          
+               Accuracy : 0.8188          
+                 95% CI : (0.7502, 0.8751)
+    No Information Rate : 0.5             
+    P-Value [Acc > NIR] : <2e-16          
+                                          
+                  Kappa : 0.6375          
+                                          
+ Mcnemar's Test P-Value : 0.4576          
+                                          
+            Sensitivity : 0.8500          
+            Specificity : 0.7875          
+         Pos Pred Value : 0.8000          
+         Neg Pred Value : 0.8400          
+              Precision : 0.8000          
+                 Recall : 0.8500          
+                     F1 : 0.8242          
+             Prevalence : 0.5000          
+         Detection Rate : 0.4250          
+   Detection Prevalence : 0.5312          
+      Balanced Accuracy : 0.8187          
+                                          
+       'Positive' Class : 0               
+                                          
+LASSO Bigrams
+Confusion Matrix and Statistics
+
+          Reference
+Prediction  0  1
+         0 64 11
+         1 16 69
+                                          
+               Accuracy : 0.8312          
+                 95% CI : (0.7641, 0.8857)
+    No Information Rate : 0.5             
+    P-Value [Acc > NIR] : <2e-16          
+                                          
+                  Kappa : 0.6625          
+                                          
+ Mcnemar's Test P-Value : 0.4414          
+                                          
+            Sensitivity : 0.8000          
+            Specificity : 0.8625          
+         Pos Pred Value : 0.8533          
+         Neg Pred Value : 0.8118          
+              Precision : 0.8533          
+                 Recall : 0.8000          
+                     F1 : 0.8258          
+             Prevalence : 0.5000          
+         Detection Rate : 0.4000          
+   Detection Prevalence : 0.4688          
+      Balanced Accuracy : 0.8313          
+                                          
+       'Positive' Class : 0               
+                                          
+Tree Unigrams
+Confusion Matrix and Statistics
+
+          Reference
+Prediction  0  1
+         0 58 30
+         1 22 50
+                                          
+               Accuracy : 0.675           
+                 95% CI : (0.5966, 0.7468)
+    No Information Rate : 0.5             
+    P-Value [Acc > NIR] : 5.654e-06       
+                                          
+                  Kappa : 0.35            
+                                          
+ Mcnemar's Test P-Value : 0.3317          
+                                          
+            Sensitivity : 0.7250          
+            Specificity : 0.6250          
+         Pos Pred Value : 0.6591          
+         Neg Pred Value : 0.6944          
+              Precision : 0.6591          
+                 Recall : 0.7250          
+                     F1 : 0.6905          
+             Prevalence : 0.5000          
+         Detection Rate : 0.3625          
+   Detection Prevalence : 0.5500          
+      Balanced Accuracy : 0.6750          
+                                          
+       'Positive' Class : 0               
+                                          
+Tree Bigrams
+Confusion Matrix and Statistics
+
+          Reference
+Prediction  0  1
+         0 61 37
+         1 19 43
+                                          
+               Accuracy : 0.65            
+                 95% CI : (0.5707, 0.7236)
+    No Information Rate : 0.5             
+    P-Value [Acc > NIR] : 9.155e-05       
+                                          
+                  Kappa : 0.3             
+                                          
+ Mcnemar's Test P-Value : 0.0231          
+                                          
+            Sensitivity : 0.7625          
+            Specificity : 0.5375          
+         Pos Pred Value : 0.6224          
+         Neg Pred Value : 0.6935          
+              Precision : 0.6224          
+                 Recall : 0.7625          
+                     F1 : 0.6854          
+             Prevalence : 0.5000          
+         Detection Rate : 0.3812          
+   Detection Prevalence : 0.6125          
+      Balanced Accuracy : 0.6500          
+                                          
+       'Positive' Class : 0               
+                                          
+Forest Unigrams
+Confusion Matrix and Statistics
+
+          Reference
+Prediction  0  1
+         0 76 20
+         1  4 60
+                                          
+               Accuracy : 0.85            
+                 95% CI : (0.7851, 0.9015)
+    No Information Rate : 0.5             
+    P-Value [Acc > NIR] : <2e-16          
+                                          
+                  Kappa : 0.7             
+                                          
+ Mcnemar's Test P-Value : 0.0022          
+                                          
+            Sensitivity : 0.9500          
+            Specificity : 0.7500          
+         Pos Pred Value : 0.7917          
+         Neg Pred Value : 0.9375          
+              Precision : 0.7917          
+                 Recall : 0.9500          
+                     F1 : 0.8636          
+             Prevalence : 0.5000          
+         Detection Rate : 0.4750          
+   Detection Prevalence : 0.6000          
+      Balanced Accuracy : 0.8500          
+                                          
+       'Positive' Class : 0               
+                                          
+Forest Bigrams
+Confusion Matrix and Statistics
+
+          Reference
+Prediction  0  1
+         0 73 12
+         1  7 68
+                                         
+               Accuracy : 0.8812         
+                 95% CI : (0.8208, 0.927)
+    No Information Rate : 0.5            
+    P-Value [Acc > NIR] : <2e-16         
+                                         
+                  Kappa : 0.7625         
+                                         
+ Mcnemar's Test P-Value : 0.3588         
+                                         
+            Sensitivity : 0.9125         
+            Specificity : 0.8500         
+         Pos Pred Value : 0.8588         
+         Neg Pred Value : 0.9067         
+              Precision : 0.8588         
+                 Recall : 0.9125         
+                     F1 : 0.8848         
+             Prevalence : 0.5000         
+         Detection Rate : 0.4562         
+   Detection Prevalence : 0.5312         
+      Balanced Accuracy : 0.8812         
+                                         
+       'Positive' Class : 0              
+                                         
