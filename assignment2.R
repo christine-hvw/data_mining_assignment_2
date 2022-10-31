@@ -7,11 +7,13 @@
 library(tm)            # basic text mining operations 
 library(udpipe)        # lemmatization
 library(SnowballC)     # dependency for stemming
+library(entropy)       # computing mutual information
 library(caret)         # modeling workflow
 library(modelr)        # modelling outside of caret
 library(naivebayes)    # multinomial naive bayes
 library(glmnet)        # lasso regression
 library(rpart)         # class. trees
+library(doParallel)    # parallel processing for RFs
 library(randomForest)  # random forests
 
 # function to perform lemmatization with tm
@@ -26,6 +28,14 @@ get_unibigrams <- function(x) {
   return(unlist(lapply(ngrams, paste, collapse = " "), 
                 use.names = FALSE))
 }
+
+# function to return all pre-processed VCorpus content as words vector
+get_allwords <- function(x) {
+  content_list <- lapply(x, `[[`, 1)
+  content_all <- paste(unlist(content_list), collapse = " ")
+  content_words <- words(content_all)
+}
+
 
 # Data pre-processing -----------------------------------------------------
 
@@ -79,6 +89,42 @@ dtm2_train # -> 1530 features, 96% sparsity
 
 dtm2_test <- DocumentTermMatrix(revs_all[-train_partition],
                                 list(dictionary = dimnames(dtm2_train)[[2]]))
+
+
+# Feature selection -------------------------------------------------------
+# compute mutual information of features and class labels and generate ranking
+# (maybe reduce feature set to k most important for modeling)
+
+# dtm_train_decep <- as.matrix(dtm_train)[dimnames(dtm_train)[[1]] %in% 1:400,]
+# dtm_train_true <- as.matrix(dtm_train)[dimnames(dtm_train)[[1]] %in% 401:800,]
+
+# convert document term matrix to binary
+# dtm_decep_bin <- as.matrix(dtm_train_decep) > 0
+# dtm_true_bin <- as.matrix(dtm_train_true) > 0
+dtm_train_bin <- as.matrix(dtm_train) > 0
+
+# compute mutual information of each term with class label
+mi_train <- apply(as.matrix(dtm_train_bin), 2,
+                        function(x,y) {
+                          mi.plugin(table(x, y)/length(y), unit = "log2")
+                          },
+                        labels[train_partition])
+
+# sort the indices from high to low mutual information
+#mi_train_ord <- order(mi_train, decreasing = TRUE)
+
+# get top five features
+#mi_train[mi_train_ord[1:5]]
+
+# get top five features for deceptive and truthful reviews
+words_decep <- get_allwords(revs_all[1:400])
+words_true <- get_allwords(revs_all[401:800])
+
+mi_decep <- mi_train[names(mi_train) %in% words_decep]
+mi_true <- mi_train[names(mi_train) %in% words_true]
+
+mi_decep[order(mi_decep, decreasing = TRUE)[1:50]]
+mi_true[order(mi_true, decreasing = TRUE)[1:50]]
 
 # Modeling ----------------------------------------------------------------
 # Try 4 different approaches below, each with and without bigram features
@@ -254,10 +300,59 @@ cat("Tree Bigrams",
 # 
 ### Unigrams
 
-# try adaptive random sampling for ntree
+# try adaptive resampling for ntree
+start.time <- proc.time()
+cl <- makePSOCKcluster(6)
+registerDoParallel(cl)
+
+rf_list <- list()
+ntrees <- c(500, 1000, 1500, 2000)
+
+rf_list <- lapply(ntrees, function(ntree) {
+  
+  set.seed(123)
+  rf_train <- train(x = as.matrix(dtm_train),
+                    y = as.factor(labels[train_partition]),
+                    method = "rf",
+                    trControl = trainControl(method = "adaptive_cv", number = 10,
+                                             adaptive = list(min = 5, alpha = 0.05, 
+                                                             method = "gls", complete = TRUE),
+                                             search = "random"),
+                    tuneLength = 10,
+                    ntree = ntree)
+})
+
+stop.time <- proc.time()
+print(stop.time - start.time) # 114.97 minutes
+stopCluster(cl)
+env <- foreach:::.foreachGlobals
+rm(list=ls(name=env), pos=env)
+
+for (i in 1:4) {
+  print(plot(rf_list[[i]]))
+}
+
+rf_predict_ls <- list()
+
+cat("Forest with adaptive resampling",
+    capture.output(
+      for (i in 1:4) {
+        print(ntrees[i])
+        rf_predict_ls[[i]] <- predict(rf_list[[i]], as.matrix(dtm_test))
+        print(
+          confusionMatrix(as.factor(rf_predict_ls[[i]]), as.factor(labels[-train_partition]),
+                          mode = "everything")
+        )
+      }
+    ), file = "results/rf_resampling.txt", sep = "\n", append = TRUE
+)
+
+# OLD, without resampling
+
 mtry_grid <- data.frame(mtry = seq(from = 5, to = 20, by = 5))
 
 set.seed(123)
+
 rf_train <- train(x = as.matrix(dtm_train),
                   y = as.factor(labels[train_partition]),
                   method = "rf",

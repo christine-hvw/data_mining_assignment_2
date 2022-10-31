@@ -1,0 +1,125 @@
+Forest with adaptive resampling
+[1] 500
+Confusion Matrix and Statistics
+
+          Reference
+Prediction  0  1
+         0 70 23
+         1 10 57
+                                          
+               Accuracy : 0.7938          
+                 95% CI : (0.7227, 0.8536)
+    No Information Rate : 0.5             
+    P-Value [Acc > NIR] : 1.654e-14       
+                                          
+                  Kappa : 0.5875          
+                                          
+ Mcnemar's Test P-Value : 0.03671         
+                                          
+            Sensitivity : 0.8750          
+            Specificity : 0.7125          
+         Pos Pred Value : 0.7527          
+         Neg Pred Value : 0.8507          
+              Precision : 0.7527          
+                 Recall : 0.8750          
+                     F1 : 0.8092          
+             Prevalence : 0.5000          
+         Detection Rate : 0.4375          
+   Detection Prevalence : 0.5813          
+      Balanced Accuracy : 0.7937          
+                                          
+       'Positive' Class : 0               
+                                          
+[1] 1000
+Confusion Matrix and Statistics
+
+          Reference
+Prediction  0  1
+         0 71 23
+         1  9 57
+                                         
+               Accuracy : 0.8            
+                 95% CI : (0.7296, 0.859)
+    No Information Rate : 0.5            
+    P-Value [Acc > NIR] : 4.211e-15      
+                                         
+                  Kappa : 0.6            
+                                         
+ Mcnemar's Test P-Value : 0.02156        
+                                         
+            Sensitivity : 0.8875         
+            Specificity : 0.7125         
+         Pos Pred Value : 0.7553         
+         Neg Pred Value : 0.8636         
+              Precision : 0.7553         
+                 Recall : 0.8875         
+                     F1 : 0.8161         
+             Prevalence : 0.5000         
+         Detection Rate : 0.4437         
+   Detection Prevalence : 0.5875         
+      Balanced Accuracy : 0.8000         
+                                         
+       'Positive' Class : 0              
+                                         
+[1] 1500
+Confusion Matrix and Statistics
+
+          Reference
+Prediction  0  1
+         0 71 23
+         1  9 57
+                                         
+               Accuracy : 0.8            
+                 95% CI : (0.7296, 0.859)
+    No Information Rate : 0.5            
+    P-Value [Acc > NIR] : 4.211e-15      
+                                         
+                  Kappa : 0.6            
+                                         
+ Mcnemar's Test P-Value : 0.02156        
+                                         
+            Sensitivity : 0.8875         
+            Specificity : 0.7125         
+         Pos Pred Value : 0.7553         
+         Neg Pred Value : 0.8636         
+              Precision : 0.7553         
+                 Recall : 0.8875         
+                     F1 : 0.8161         
+             Prevalence : 0.5000         
+         Detection Rate : 0.4437         
+   Detection Prevalence : 0.5875         
+      Balanced Accuracy : 0.8000         
+                                         
+       'Positive' Class : 0              
+                                         
+[1] 2000
+Confusion Matrix and Statistics
+
+          Reference
+Prediction  0  1
+         0 71 22
+         1  9 58
+                                          
+               Accuracy : 0.8062          
+                 95% CI : (0.7364, 0.8644)
+    No Information Rate : 0.5             
+    P-Value [Acc > NIR] : 1.032e-15       
+                                          
+                  Kappa : 0.6125          
+                                          
+ Mcnemar's Test P-Value : 0.03114         
+                                          
+            Sensitivity : 0.8875          
+            Specificity : 0.7250          
+         Pos Pred Value : 0.7634          
+         Neg Pred Value : 0.8657          
+              Precision : 0.7634          
+                 Recall : 0.8875          
+                     F1 : 0.8208          
+             Prevalence : 0.5000          
+         Detection Rate : 0.4437          
+   Detection Prevalence : 0.5813          
+      Balanced Accuracy : 0.8062          
+                                          
+       'Positive' Class : 0               
+                                          
