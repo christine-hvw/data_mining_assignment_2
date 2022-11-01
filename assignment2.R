@@ -352,6 +352,30 @@ cat("Forest Bigrams",
 # compare accuracy, precision, recall and F1 score
 # conduct statistical test for accuracy
 
+best_predictions_names <- c("mnb_predict", "mnb2_predict", "lasso_predict", "lasso2_predict",
+                            "tree_predict", "tree2_predict") # run RANDOM FOREST again and add!
+
+best_predictions <- mget(best_predictions_names, envir = globalenv())
+
+all_measures <- lapply(best_predictions, get_measures, observed = labels[-train_partition])
+
+all_measures_df <- as.data.frame(do.call("rbind", all_measures))
+
+
+# Tests within models (unigrams vs. uni+bigrams)
+for(i in list(c(1,2), c(3,4), c(5,6))) {
+  print(names(best_predictions[i]))
+  print(test_mcnemar(best_predictions[[i[1]]], best_predictions[[i[2]]],
+                     observed = labels[-train_partition]))
+}
+
+# Tests between different model classes
+for(i in list(c(1,3), c(1,5), c(3,5),
+              c(2,4), c(2,6), c(4,6))) {
+  print(names(best_predictions[i]))
+  print(test_mcnemar(best_predictions[[i[1]]], best_predictions[[i[2]]],
+                     observed = labels[-train_partition]))
+}
 
 ## Most important features ------------------------------------------------
 # list top 5 features for fake and genuine reviews (for best performing model)

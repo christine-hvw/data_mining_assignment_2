@@ -125,3 +125,39 @@ get_features_tree <- function(train_model) {
   names(top5_vals) <- imps_ord[1:5, "feature"]
   list(top5 = top5_vals)
 }
+
+## FOREST
+
+# TO DO
+
+
+# Performance measures ----------------------------------------------------
+
+get_measures <- function(predicted, observed) {
+  
+  conf_mat <- confusionMatrix(as.factor(predicted), as.factor(observed),
+                              mode = "everything")
+  
+  measures <- c("Accuracy" = 0, "Precision" = 0, "Recall" = 0, "F1" = 0)
+  
+  measures["Accuracy"] <- conf_mat$overall[["Accuracy"]]
+  measures[2:4] <- sapply(names(measures[2:4]), 
+                              function(x) {conf_mat$byClass[[x]]}
+                           )
+  measures
+}
+
+
+# Significance testing ----------------------------------------------------
+
+test_mcnemar <- function(predicted_a, predicted_b, observed) {
+  
+  if(all(predicted_a == predicted_b)) {
+    warning("NAs were generated because model predictions are equivalent!", call. = FALSE)
+  }
+  
+  class_a <- predicted_a == observed
+  class_b <- predicted_b == observed
+  
+  mcnemar.test(x = table(class_a, class_b))
+}
