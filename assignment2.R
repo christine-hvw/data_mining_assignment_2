@@ -91,7 +91,7 @@ mi_train_ord <- order(mi_train, decreasing = TRUE)
 
 # get top five features
 cat("Top 5 features (mutual information)",
-    capture.output(mi_train[mi_train_ord[1:5]]),
+    capture.output(mi_train[mi_train_ord[1:5]]), "\n",
     file = "results/results.txt", sep = "\n", append = TRUE)
 
 
@@ -118,17 +118,17 @@ mnb_train <- multinomial_naive_bayes(x = as.matrix(dtm_train),
                                      y = as.factor(labels[train_partition]),
                                      laplace = best_laplace)
 
-mnb_predict <- predict(mnb_train, as.matrix(dtm_test), type = "prob")
+mnb_predict <- predict(mnb_train, as.matrix(dtm_test), type = "class")
 
 mnb_5features <- get_features_mnb(mnb_train)
   
 cat("MNB Unigrams",
-    paste("Laplace smoothing param. = ", best_laplace),
+    paste("Laplace smoothing param. = ", best_laplace), "\n",
     capture.output(
       confusionMatrix(as.factor(mnb_predict), as.factor(labels[-train_partition]),
                       mode = "everything")),
     paste("Deceptive features:", mnb_5features[1]),
-    paste("Truthful features:", mnb_5features[2]),
+    paste("Truthful features:", mnb_5features[2]), "\n",
     file = "results/results.txt", sep = "\n", append = TRUE)
 
 
@@ -138,17 +138,17 @@ mnb2_train <- multinomial_naive_bayes(x = as.matrix(dtm2_train),
                                       y = as.factor(labels[train_partition]),
                                       laplace = best_laplace2)
 
-mnb2_predict <- predict(mnb2_train, as.matrix(dtm2_test))
+mnb2_predict <- predict(mnb2_train, as.matrix(dtm2_test), type = "class")
 
 mnb2_5features <- get_features_mnb(mnb2_train)
 
 cat("MNB Bigrams",
-    paste("Laplace smoothing param. = ", best_laplace2),
+    paste("Laplace smoothing param. = ", best_laplace2), "\n",
     capture.output(
       confusionMatrix(as.factor(mnb2_predict), as.factor(labels[-train_partition]),
                       mode = "everything")),
     paste("Deceptive features:", mnb2_5features[1]),
-    paste("Truthful features:", mnb2_5features[2]),
+    paste("Truthful features:", mnb2_5features[2]), "\n",
     file = "results/results.txt", sep = "\n", append = TRUE)
 
 
@@ -169,12 +169,12 @@ lasso_predict <- predict(lasso_train, newx = as.matrix(dtm_test),
 lasso_5features <- get_features_lasso(lasso_train, dtm_test)
 
 cat("LASSO Unigrams",
-    paste("lambda (1 SE) =", lasso_train[["lambda.1se"]]),
+    paste("lambda (1 SE) =", lasso_train[["lambda.1se"]]), "\n",
     capture.output(
       confusionMatrix(as.factor(lasso_predict), as.factor(labels[-train_partition]),
                       mode = "everything")),
     paste("Deceptive features:", lasso_5features[1]),
-    paste("Truthful features:", lasso_5features[2]),
+    paste("Truthful features:", lasso_5features[2]), "\n",
     file = "results/results.txt", sep = "\n", append = TRUE)
 
 ### Bigrams
@@ -189,12 +189,12 @@ lasso2_predict <- predict(lasso2_train, newx = as.matrix(dtm2_test),
 lasso2_5features <- get_features_lasso(lasso2_train, dtm2_test)
 
 cat("LASSO Bigrams",
-    paste("lambda (1 SE) =", lasso2_train[["lambda.1se"]]),
+    paste("lambda (1 SE) =", lasso2_train[["lambda.1se"]]), "\n",
     capture.output(
       confusionMatrix(as.factor(lasso2_predict), as.factor(labels[-train_partition]),
                       mode = "everything")),
     paste("Deceptive features:", lasso2_5features[1]),
-    paste("Truthful features:", lasso2_5features[2]),
+    paste("Truthful features:", lasso2_5features[2]), "\n",
     file = "results/results.txt", sep = "\n", append = TRUE)
 
 
@@ -213,11 +213,14 @@ tree_train <- train(x = as.matrix(dtm_train),
 
 tree_predict <- predict(tree_train, as.matrix(dtm_test))
 
+tree_5features <- get_features_tree(tree_train)
+
 cat("Tree Unigrams",
-    paste("cp =", tree_train[["bestTune"]][["cp"]]),
+    paste("cp (random search, 100 values) =", tree_train[["bestTune"]][["cp"]]), "\n",
     capture.output(
       confusionMatrix(as.factor(tree_predict), as.factor(labels[-train_partition]),
                       mode = "everything")),
+    paste("Most important features:", tree_5features), "\n",
     file = "results/results.txt", sep = "\n", append = TRUE)
 
 ### Bigrams
@@ -231,11 +234,14 @@ tree2_train <- train(x = as.matrix(dtm2_train),
 
 tree2_predict <- predict(tree2_train, as.matrix(dtm2_test))
 
+tree2_5features <- get_features_tree(tree2_train)
+
 cat("Tree Bigrams",
-    paste("cp =", tree2_train[["bestTune"]][["cp"]]),
+    paste("cp (random search, 100 values) =", tree2_train[["bestTune"]][["cp"]]), "\n",
     capture.output(
       confusionMatrix(as.factor(tree2_predict), as.factor(labels[-train_partition]),
                       mode = "everything")),
+    paste("Most important features:", tree2_5features), "\n",
     file = "results/results.txt", sep = "\n", append = TRUE)
 
 

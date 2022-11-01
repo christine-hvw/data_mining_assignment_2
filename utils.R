@@ -77,7 +77,7 @@ tune_mnb <- function(train_data){
 
 get_features_mnb <- function(train_model) {
   
-  lapply(1:2, function(class) {
+  top5 <- lapply(1:2, function(class) {
     coefs <- coef(train_model)
     coefs["feature"] <- rownames(coefs)
     order <- order(coefs[class], decreasing = TRUE)
@@ -86,6 +86,9 @@ get_features_mnb <- function(train_model) {
     names(top5) <- top5_df[["feature"]]
     top5
   })
+  
+  names(top5) <- c("deceptive", "truthful")
+  top5
 }
 
 
@@ -108,4 +111,17 @@ get_features_lasso <- function(train_model, test_data) {
   names(top5_decep_vals) <- coef_names[top5_decep_mat[,"i"]]
   
   list(deceptive = top5_decep_vals, truthful = top5_true_vals)
+}
+
+## TREE
+
+get_features_tree <- function(train_model) {
+  
+  imps <- varImp(train_model, scale = FALSE)$importance
+  imps["feature"] <- rownames(imps)
+  imps_ord <- imps[order(imps$Overall, decreasing = TRUE),]
+  
+  top5_vals <- imps_ord[1:5, "Overall"]
+  names(top5_vals) <- imps_ord[1:5, "feature"]
+  list(top5 = top5_vals)
 }
