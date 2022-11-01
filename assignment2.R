@@ -27,7 +27,11 @@ files_all <- list.files(path = "data",
                         pattern = ".txt",
                         full.names = TRUE)
 
-revs_all <- sapply(files_all, function(x) readLines(x))
+revs_decep <- sapply(files_all[grepl("decep", files_all)], function(x) readLines(x))
+revs_true <- sapply(files_all[grepl("truth", files_all)], function(x) readLines(x))
+
+revs_all <- c(revs_true, revs_decep)
+
 revs_all <- VCorpus(VectorSource(revs_all))
 
 # Pre-processing of text
@@ -39,7 +43,7 @@ revs_all <- tm_map(revs_all, stripWhitespace)
 revs_all <- tm_map(revs_all, content_transformer(get_lemmas)) # can take a minute
 revs_all <- tm_map(revs_all, stemDocument)
 
-# Create label vector (0=deceptive, 1=truthful)
+# Create label vector (0=truthful, 1=deceptive)
 labels <- c(rep(0, 400), rep(1, 400))
 
 # Data partitioning (folds 1-4 out of 5 for both classes)
@@ -127,8 +131,8 @@ cat("MNB Unigrams",
     capture.output(
       confusionMatrix(as.factor(mnb_predict), as.factor(labels[-train_partition]),
                       mode = "everything")),
-    paste("Deceptive features:", mnb_5features[1]),
-    paste("Truthful features:", mnb_5features[2]), "\n",
+    paste("Deceptive features:", mnb_5features["deceptive"]),
+    paste("Truthful features:", mnb_5features["truthful"]), "\n",
     file = "results/results.txt", sep = "\n", append = TRUE)
 
 
@@ -147,8 +151,8 @@ cat("MNB Bigrams",
     capture.output(
       confusionMatrix(as.factor(mnb2_predict), as.factor(labels[-train_partition]),
                       mode = "everything")),
-    paste("Deceptive features:", mnb2_5features[1]),
-    paste("Truthful features:", mnb2_5features[2]), "\n",
+    paste("Deceptive features:", mnb2_5features["deceptive"]),
+    paste("Truthful features:", mnb2_5features["truthful"]), "\n",
     file = "results/results.txt", sep = "\n", append = TRUE)
 
 
@@ -173,12 +177,13 @@ cat("LASSO Unigrams",
     capture.output(
       confusionMatrix(as.factor(lasso_predict), as.factor(labels[-train_partition]),
                       mode = "everything")),
-    paste("Deceptive features:", lasso_5features[1]),
-    paste("Truthful features:", lasso_5features[2]), "\n",
+    paste("Deceptive features:", lasso_5features["deceptive"]),
+    paste("Truthful features:", lasso_5features["truthful"]), "\n",
     file = "results/results.txt", sep = "\n", append = TRUE)
 
 ### Bigrams
 
+set.seed(123)
 lasso2_train <- cv.glmnet(x = as.matrix(dtm2_train),
                           y = labels[train_partition],
                           family = "binomial", type.measure = "class", nfolds = 10)
@@ -193,8 +198,8 @@ cat("LASSO Bigrams",
     capture.output(
       confusionMatrix(as.factor(lasso2_predict), as.factor(labels[-train_partition]),
                       mode = "everything")),
-    paste("Deceptive features:", lasso2_5features[1]),
-    paste("Truthful features:", lasso2_5features[2]), "\n",
+    paste("Deceptive features:", lasso2_5features["deceptive"]),
+    paste("Truthful features:", lasso2_5features["truthful"]), "\n",
     file = "results/results.txt", sep = "\n", append = TRUE)
 
 
@@ -271,7 +276,8 @@ rf_list <- lapply(ntrees, function(ntree) {
                     method = "rf",
                     trControl = trainControl(method = "cv", number = 10),
                     tuneGrid = mtry_grid,
-                    ntree = ntree)
+                    ntree = ntree,
+                    importance = TRUE)
 })
 
 stop.time <- proc.time()
@@ -281,20 +287,25 @@ env <- foreach:::.foreachGlobals
 rm(list=ls(name=env), pos=env)
 
 
-rf_predict_ls <- list()
+rf_predict_ls <- lapply(rf_list, function(x){
+  predict(x, as.matrix(dtm_test))
+})
+
+forest_5features <- get_features_forest(rf_list)
 
 cat("Forest Unigrams",
     capture.output(
       for (i in 1:4) {
-        cat("ntrees =", ntrees[i], "; ",
+        cat("\n", "ntrees =", ntrees[i], "; ",
             "mtry =", rf_list[[i]][["bestTune"]][["mtry"]], "\n")
-        rf_predict_ls[[i]] <- predict(rf_list[[i]], as.matrix(dtm_test))
         print(
           confusionMatrix(as.factor(rf_predict_ls[[i]]), as.factor(labels[-train_partition]),
                           mode = "everything")
         )
+        print(paste("Deceptive features: ", forest_5features[[i]]["deceptive"]))
+        print(paste("Truthful features: ", forest_5features[[i]]["truthful"]))
       }
-    ), file = "results/results.txt", sep = "\n", append = TRUE
+    ), "\n", file = "results/results.txt", sep = "\n", append = TRUE
 )
 
 
@@ -318,7 +329,9 @@ rf2_list <- lapply(ntrees, function(ntree) {
                      y = as.factor(labels[train_partition]),
                      method = "rf",
                      trControl = trainControl(method = "cv", number = 10),
-                     tuneGrid = mtry_grid2)
+                     tuneGrid = mtry_grid2,
+                     ntree = ntree,
+                     importance = TRUE)
 })
 
 stop.time <- proc.time()
@@ -328,20 +341,25 @@ env <- foreach:::.foreachGlobals
 rm(list=ls(name=env), pos=env)
 
 
-rf2_predict_ls <- list()
+rf2_predict_ls <- lapply(rf2_list, function(x){
+  predict(x, as.matrix(dtm2_test))
+})
+
+forest2_5features <- get_features_forest(rf2_list)
 
 cat("Forest Bigrams",
     capture.output(
       for (i in 1:4) {
-        cat("ntrees =", ntrees[i], "; ",
+        cat("\n", "ntrees =", ntrees[i], "; ",
             "mtry =", rf2_list[[i]][["bestTune"]][["mtry"]], "\n")
-        rf2_predict_ls[[i]] <- predict(rf2_list[[i]], as.matrix(dtm2_test))
         print(
           confusionMatrix(as.factor(rf2_predict_ls[[i]]), as.factor(labels[-train_partition]),
                           mode = "everything")
         )
+        print(paste("Deceptive features: ", forest2_5features[[i]]["deceptive"]))
+        print(paste("Truthful features: ", forest2_5features[[i]]["truthful"]))
       }
-    ), file = "results/results.txt", sep = "\n", append = TRUE
+    ), "\n", file = "results/results.txt", sep = "\n", append = TRUE
 )
 
 
@@ -350,7 +368,6 @@ cat("Forest Bigrams",
 
 ## Performance measures ---------------------------------------------------
 # compare accuracy, precision, recall and F1 score
-# conduct statistical test for accuracy
 
 best_predictions_names <- c("mnb_predict", "mnb2_predict", "lasso_predict", "lasso2_predict",
                             "tree_predict", "tree2_predict") # run RANDOM FOREST again and add!
@@ -361,6 +378,8 @@ all_measures <- lapply(best_predictions, get_measures, observed = labels[-train_
 
 all_measures_df <- as.data.frame(do.call("rbind", all_measures))
 
+
+# conduct statistical test for accuracy
 
 # Tests within models (unigrams vs. uni+bigrams)
 for(i in list(c(1,2), c(3,4), c(5,6))) {

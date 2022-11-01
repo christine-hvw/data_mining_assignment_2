@@ -1,227 +1,18 @@
+Top 5 features (mutual information)
+   chicago      smell     luxuri     recent      locat 
+0.13052043 0.06082965 0.05007746 0.04943805 0.03580834 
+
+
 MNB Unigrams
+Laplace smoothing param. =  0.6
+
+
 Confusion Matrix and Statistics
 
           Reference
 Prediction  0  1
-         0 74 14
-         1  6 66
-                                          
-               Accuracy : 0.875           
-                 95% CI : (0.8136, 0.9219)
-    No Information Rate : 0.5             
-    P-Value [Acc > NIR] : <2e-16          
-                                          
-                  Kappa : 0.75            
-                                          
- Mcnemar's Test P-Value : 0.1175          
-                                          
-            Sensitivity : 0.9250          
-            Specificity : 0.8250          
-         Pos Pred Value : 0.8409          
-         Neg Pred Value : 0.9167          
-              Precision : 0.8409          
-                 Recall : 0.9250          
-                     F1 : 0.8810          
-             Prevalence : 0.5000          
-         Detection Rate : 0.4625          
-   Detection Prevalence : 0.5500          
-      Balanced Accuracy : 0.8750          
-                                          
-       'Positive' Class : 0               
-                                          
-MNB Bigrams
-Confusion Matrix and Statistics
-
-          Reference
-Prediction  0  1
-         0 65  9
-         1 15 71
-                                          
-               Accuracy : 0.85            
-                 95% CI : (0.7851, 0.9015)
-    No Information Rate : 0.5             
-    P-Value [Acc > NIR] : <2e-16          
-                                          
-                  Kappa : 0.7             
-                                          
- Mcnemar's Test P-Value : 0.3074          
-                                          
-            Sensitivity : 0.8125          
-            Specificity : 0.8875          
-         Pos Pred Value : 0.8784          
-         Neg Pred Value : 0.8256          
-              Precision : 0.8784          
-                 Recall : 0.8125          
-                     F1 : 0.8442          
-             Prevalence : 0.5000          
-         Detection Rate : 0.4062          
-   Detection Prevalence : 0.4625          
-      Balanced Accuracy : 0.8500          
-                                          
-       'Positive' Class : 0               
-                                          
-LASSO Unigrams
-Confusion Matrix and Statistics
-
-          Reference
-Prediction  0  1
-         0 68 17
-         1 12 63
-                                          
-               Accuracy : 0.8188          
-                 95% CI : (0.7502, 0.8751)
-    No Information Rate : 0.5             
-    P-Value [Acc > NIR] : <2e-16          
-                                          
-                  Kappa : 0.6375          
-                                          
- Mcnemar's Test P-Value : 0.4576          
-                                          
-            Sensitivity : 0.8500          
-            Specificity : 0.7875          
-         Pos Pred Value : 0.8000          
-         Neg Pred Value : 0.8400          
-              Precision : 0.8000          
-                 Recall : 0.8500          
-                     F1 : 0.8242          
-             Prevalence : 0.5000          
-         Detection Rate : 0.4250          
-   Detection Prevalence : 0.5312          
-      Balanced Accuracy : 0.8187          
-                                          
-       'Positive' Class : 0               
-                                          
-LASSO Bigrams
-Confusion Matrix and Statistics
-
-          Reference
-Prediction  0  1
-         0 64 11
-         1 16 69
-                                          
-               Accuracy : 0.8312          
-                 95% CI : (0.7641, 0.8857)
-    No Information Rate : 0.5             
-    P-Value [Acc > NIR] : <2e-16          
-                                          
-                  Kappa : 0.6625          
-                                          
- Mcnemar's Test P-Value : 0.4414          
-                                          
-            Sensitivity : 0.8000          
-            Specificity : 0.8625          
-         Pos Pred Value : 0.8533          
-         Neg Pred Value : 0.8118          
-              Precision : 0.8533          
-                 Recall : 0.8000          
-                     F1 : 0.8258          
-             Prevalence : 0.5000          
-         Detection Rate : 0.4000          
-   Detection Prevalence : 0.4688          
-      Balanced Accuracy : 0.8313          
-                                          
-       'Positive' Class : 0               
-                                          
-Tree Unigrams
-Confusion Matrix and Statistics
-
-          Reference
-Prediction  0  1
-         0 58 30
-         1 22 50
-                                          
-               Accuracy : 0.675           
-                 95% CI : (0.5966, 0.7468)
-    No Information Rate : 0.5             
-    P-Value [Acc > NIR] : 5.654e-06       
-                                          
-                  Kappa : 0.35            
-                                          
- Mcnemar's Test P-Value : 0.3317          
-                                          
-            Sensitivity : 0.7250          
-            Specificity : 0.6250          
-         Pos Pred Value : 0.6591          
-         Neg Pred Value : 0.6944          
-              Precision : 0.6591          
-                 Recall : 0.7250          
-                     F1 : 0.6905          
-             Prevalence : 0.5000          
-         Detection Rate : 0.3625          
-   Detection Prevalence : 0.5500          
-      Balanced Accuracy : 0.6750          
-                                          
-       'Positive' Class : 0               
-                                          
-Tree Bigrams
-Confusion Matrix and Statistics
-
-          Reference
-Prediction  0  1
-         0 61 37
-         1 19 43
-                                          
-               Accuracy : 0.65            
-                 95% CI : (0.5707, 0.7236)
-    No Information Rate : 0.5             
-    P-Value [Acc > NIR] : 9.155e-05       
-                                          
-                  Kappa : 0.3             
-                                          
- Mcnemar's Test P-Value : 0.0231          
-                                          
-            Sensitivity : 0.7625          
-            Specificity : 0.5375          
-         Pos Pred Value : 0.6224          
-         Neg Pred Value : 0.6935          
-              Precision : 0.6224          
-                 Recall : 0.7625          
-                     F1 : 0.6854          
-             Prevalence : 0.5000          
-         Detection Rate : 0.3812          
-   Detection Prevalence : 0.6125          
-      Balanced Accuracy : 0.6500          
-                                          
-       'Positive' Class : 0               
-                                          
-Forest Unigrams
-Confusion Matrix and Statistics
-
-          Reference
-Prediction  0  1
-         0 76 20
-         1  4 60
-                                          
-               Accuracy : 0.85            
-                 95% CI : (0.7851, 0.9015)
-    No Information Rate : 0.5             
-    P-Value [Acc > NIR] : <2e-16          
-                                          
-                  Kappa : 0.7             
-                                          
- Mcnemar's Test P-Value : 0.0022          
-                                          
-            Sensitivity : 0.9500          
-            Specificity : 0.7500          
-         Pos Pred Value : 0.7917          
-         Neg Pred Value : 0.9375          
-              Precision : 0.7917          
-                 Recall : 0.9500          
-                     F1 : 0.8636          
-             Prevalence : 0.5000          
-         Detection Rate : 0.4750          
-   Detection Prevalence : 0.6000          
-      Balanced Accuracy : 0.8500          
-                                          
-       'Positive' Class : 0               
-                                          
-Forest Bigrams
-Confusion Matrix and Statistics
-
-          Reference
-Prediction  0  1
-         0 73 12
-         1  7 68
+         0 72 11
+         1  8 69
                                          
                Accuracy : 0.8812         
                  95% CI : (0.8208, 0.927)
@@ -230,19 +21,489 @@ Prediction  0  1
                                          
                   Kappa : 0.7625         
                                          
- Mcnemar's Test P-Value : 0.3588         
+ Mcnemar's Test P-Value : 0.6464         
                                          
-            Sensitivity : 0.9125         
-            Specificity : 0.8500         
-         Pos Pred Value : 0.8588         
-         Neg Pred Value : 0.9067         
-              Precision : 0.8588         
-                 Recall : 0.9125         
-                     F1 : 0.8848         
+            Sensitivity : 0.9000         
+            Specificity : 0.8625         
+         Pos Pred Value : 0.8675         
+         Neg Pred Value : 0.8961         
+              Precision : 0.8675         
+                 Recall : 0.9000         
+                     F1 : 0.8834         
              Prevalence : 0.5000         
-         Detection Rate : 0.4562         
-   Detection Prevalence : 0.5312         
-      Balanced Accuracy : 0.8812         
+         Detection Rate : 0.4500         
+   Detection Prevalence : 0.5188         
+      Balanced Accuracy : 0.8813         
                                          
        'Positive' Class : 0              
                                          
+Deceptive features: c(room = 0.0384344204502599, hotel = 0.0333513699640907, stay = 0.020561759063407, chicago = 0.0155197009198682, get = 0.0120353517962845)
+Truthful features: c(room = 0.0327943653091531, hotel = 0.0288952123379155, stay = 0.01744663552875, get = 0.0109757008105261, night = 0.00865280116808668)
+
+
+MNB Bigrams
+Laplace smoothing param. =  0.5
+
+
+Confusion Matrix and Statistics
+
+          Reference
+Prediction  0  1
+         0 77 21
+         1  3 59
+                                          
+               Accuracy : 0.85            
+                 95% CI : (0.7851, 0.9015)
+    No Information Rate : 0.5             
+    P-Value [Acc > NIR] : < 2.2e-16       
+                                          
+                  Kappa : 0.7             
+                                          
+ Mcnemar's Test P-Value : 0.0005202       
+                                          
+            Sensitivity : 0.9625          
+            Specificity : 0.7375          
+         Pos Pred Value : 0.7857          
+         Neg Pred Value : 0.9516          
+              Precision : 0.7857          
+                 Recall : 0.9625          
+                     F1 : 0.8652          
+             Prevalence : 0.5000          
+         Detection Rate : 0.4813          
+   Detection Prevalence : 0.6125          
+      Balanced Accuracy : 0.8500          
+                                          
+       'Positive' Class : 0               
+                                          
+Deceptive features: c(room = 0.0326234471239169, hotel = 0.0283084525176602, stay = 0.0174513693148206, chicago = 0.0131711730521627, get = 0.0102133138462609)
+Truthful features: c(room = 0.0290294150049576, hotel = 0.0255774668576255, stay = 0.0154419595314164, get = 0.00971319452095039, night = 0.00765671477360361)
+
+
+LASSO Unigrams
+lambda (1 SE) = 0.0226884767748429
+
+
+Confusion Matrix and Statistics
+
+          Reference
+Prediction  0  1
+         0 72 21
+         1  8 59
+                                          
+               Accuracy : 0.8188          
+                 95% CI : (0.7502, 0.8751)
+    No Information Rate : 0.5             
+    P-Value [Acc > NIR] : < 2e-16         
+                                          
+                  Kappa : 0.6375          
+                                          
+ Mcnemar's Test P-Value : 0.02586         
+                                          
+            Sensitivity : 0.9000          
+            Specificity : 0.7375          
+         Pos Pred Value : 0.7742          
+         Neg Pred Value : 0.8806          
+              Precision : 0.7742          
+                 Recall : 0.9000          
+                     F1 : 0.8324          
+             Prevalence : 0.5000          
+         Detection Rate : 0.4500          
+   Detection Prevalence : 0.5813          
+      Balanced Accuracy : 0.8188          
+                                          
+       'Positive' Class : 0               
+                                          
+Deceptive features: c(recent = 0.907436080009851, luxuri = 0.833646437142472, millennium = 0.778733016263338, smell = 0.746302547539149, chicago = 0.720239858008335)
+Truthful features: c(adult = -0.623485717656846, world = -0.590895527758734, frequent = -0.551544385098992, elev = -0.54975454719477, star = -0.532285493329555)
+
+
+LASSO Bigrams
+lambda (1 SE) = 0.0226884767748429
+
+
+Confusion Matrix and Statistics
+
+          Reference
+Prediction  0  1
+         0 73 27
+         1  7 53
+                                          
+               Accuracy : 0.7875          
+                 95% CI : (0.7159, 0.8481)
+    No Information Rate : 0.5             
+    P-Value [Acc > NIR] : 6.26e-14        
+                                          
+                  Kappa : 0.575           
+                                          
+ Mcnemar's Test P-Value : 0.00112         
+                                          
+            Sensitivity : 0.9125          
+            Specificity : 0.6625          
+         Pos Pred Value : 0.7300          
+         Neg Pred Value : 0.8833          
+              Precision : 0.7300          
+                 Recall : 0.9125          
+                     F1 : 0.8111          
+             Prevalence : 0.5000          
+         Detection Rate : 0.4562          
+   Detection Prevalence : 0.6250          
+      Balanced Accuracy : 0.7875          
+                                          
+       'Positive' Class : 0               
+                                          
+Deceptive features: c(`homewood suit` = 0.992378709247021, luxuri = 0.871634359985827, `arriv room` = 0.810121884121334, smell = 0.773234041239974, millennium = 0.707746064290842)
+Truthful features: c(`book hotel` = -0.865205312603574, `stay mani` = -0.583045553749593, elev = -0.555360338857647, adult = -0.553204450909389, star = -0.521671633904691)
+
+
+Tree Unigrams
+cp (random search, 100 values) = 0.0125
+
+
+Confusion Matrix and Statistics
+
+          Reference
+Prediction  0  1
+         0 60 33
+         1 20 47
+                                         
+               Accuracy : 0.6688         
+                 95% CI : (0.5901, 0.741)
+    No Information Rate : 0.5            
+    P-Value [Acc > NIR] : 1.181e-05      
+                                         
+                  Kappa : 0.3375         
+                                         
+ Mcnemar's Test P-Value : 0.09929        
+                                         
+            Sensitivity : 0.7500         
+            Specificity : 0.5875         
+         Pos Pred Value : 0.6452         
+         Neg Pred Value : 0.7015         
+              Precision : 0.6452         
+                 Recall : 0.7500         
+                     F1 : 0.6936         
+             Prevalence : 0.5000         
+         Detection Rate : 0.3750         
+   Detection Prevalence : 0.5813         
+      Balanced Accuracy : 0.6687         
+                                         
+       'Positive' Class : 0              
+                                         
+Most important features: c(chicago = 62.3867418621331, smell = 50.7068715203472, locat = 40.2386484074648, luxuri = 33.4371430988412, recent = 20.1866368047779)
+
+
+Tree Bigrams
+cp (random search, 100 values) = 0.009375
+
+
+Confusion Matrix and Statistics
+
+          Reference
+Prediction  0  1
+         0 61 34
+         1 19 46
+                                         
+               Accuracy : 0.6688         
+                 95% CI : (0.5901, 0.741)
+    No Information Rate : 0.5            
+    P-Value [Acc > NIR] : 1.181e-05      
+                                         
+                  Kappa : 0.3375         
+                                         
+ Mcnemar's Test P-Value : 0.05447        
+                                         
+            Sensitivity : 0.7625         
+            Specificity : 0.5750         
+         Pos Pred Value : 0.6421         
+         Neg Pred Value : 0.7077         
+              Precision : 0.6421         
+                 Recall : 0.7625         
+                     F1 : 0.6971         
+             Prevalence : 0.5000         
+         Detection Rate : 0.3812         
+   Detection Prevalence : 0.5938         
+      Balanced Accuracy : 0.6687         
+                                         
+       'Positive' Class : 0              
+                                         
+Most important features: c(chicago = 62.3867418621331, smell = 50.7068715203472, locat = 29.133772383388, luxuri = 26.8901985963485, construct = 22.3297812566722)
+
+
+Forest Unigrams
+
+ ntrees = 500 ;  mtry = 22 
+Confusion Matrix and Statistics
+
+          Reference
+Prediction  0  1
+         0 71 18
+         1  9 62
+                                          
+               Accuracy : 0.8312          
+                 95% CI : (0.7641, 0.8857)
+    No Information Rate : 0.5             
+    P-Value [Acc > NIR] : <2e-16          
+                                          
+                  Kappa : 0.6625          
+                                          
+ Mcnemar's Test P-Value : 0.1237          
+                                          
+            Sensitivity : 0.8875          
+            Specificity : 0.7750          
+         Pos Pred Value : 0.7978          
+         Neg Pred Value : 0.8732          
+              Precision : 0.7978          
+                 Recall : 0.8875          
+                     F1 : 0.8402          
+             Prevalence : 0.5000          
+         Detection Rate : 0.4437          
+   Detection Prevalence : 0.5563          
+      Balanced Accuracy : 0.8313          
+                                          
+       'Positive' Class : 0               
+                                          
+[1] "Deceptive features:  c(chicago = 0.0154548926083892, locat = 0.00663871463483839, elev = 0.00489500433787095, smell = 0.00453001564585862, recent = 0.00364363576188753)"
+[1] "Truthful features:  c(chicago = 0.0263918084392217, smell = 0.00890071670005866, recent = 0.00729891825948595, luxuri = 0.00584795215956708, look = 0.00540204228241769)"
+
+ ntrees = 1000 ;  mtry = 42 
+Confusion Matrix and Statistics
+
+          Reference
+Prediction  0  1
+         0 73 20
+         1  7 60
+                                          
+               Accuracy : 0.8312          
+                 95% CI : (0.7641, 0.8857)
+    No Information Rate : 0.5             
+    P-Value [Acc > NIR] : < 2e-16         
+                                          
+                  Kappa : 0.6625          
+                                          
+ Mcnemar's Test P-Value : 0.02092         
+                                          
+            Sensitivity : 0.9125          
+            Specificity : 0.7500          
+         Pos Pred Value : 0.7849          
+         Neg Pred Value : 0.8955          
+              Precision : 0.7849          
+                 Recall : 0.9125          
+                     F1 : 0.8439          
+             Prevalence : 0.5000          
+         Detection Rate : 0.4562          
+   Detection Prevalence : 0.5813          
+      Balanced Accuracy : 0.8313          
+                                          
+       'Positive' Class : 0               
+                                          
+[1] "Deceptive features:  c(chicago = 0.022611001600501, locat = 0.00760951906635103, smell = 0.00597563320518867, luxuri = 0.00515775847256396, elev = 0.00458625654938668)"
+[1] "Truthful features:  c(chicago = 0.0396383907577788, smell = 0.0116295956784185, recent = 0.0107804027083722, luxuri = 0.00893430932855187, rude = 0.00613890737656764)"
+
+ ntrees = 1500 ;  mtry = 22 
+Confusion Matrix and Statistics
+
+          Reference
+Prediction  0  1
+         0 70 18
+         1 10 62
+                                          
+               Accuracy : 0.825           
+                 95% CI : (0.7571, 0.8805)
+    No Information Rate : 0.5             
+    P-Value [Acc > NIR] : <2e-16          
+                                          
+                  Kappa : 0.65            
+                                          
+ Mcnemar's Test P-Value : 0.1859          
+                                          
+            Sensitivity : 0.8750          
+            Specificity : 0.7750          
+         Pos Pred Value : 0.7955          
+         Neg Pred Value : 0.8611          
+              Precision : 0.7955          
+                 Recall : 0.8750          
+                     F1 : 0.8333          
+             Prevalence : 0.5000          
+         Detection Rate : 0.4375          
+   Detection Prevalence : 0.5500          
+      Balanced Accuracy : 0.8250          
+                                          
+       'Positive' Class : 0               
+                                          
+[1] "Deceptive features:  c(chicago = 0.0157801304761429, locat = 0.00697066885377455, smell = 0.00475483667378303, elev = 0.00422645714937987, recent = 0.00386042018198795)"
+[1] "Truthful features:  c(chicago = 0.0261981781207333, smell = 0.00890586658481857, recent = 0.00776607981341606, luxuri = 0.00586100145026583, look = 0.00404513378560941)"
+
+ ntrees = 2000 ;  mtry = 22 
+Confusion Matrix and Statistics
+
+          Reference
+Prediction  0  1
+         0 71 19
+         1  9 61
+                                          
+               Accuracy : 0.825           
+                 95% CI : (0.7571, 0.8805)
+    No Information Rate : 0.5             
+    P-Value [Acc > NIR] : < 2e-16         
+                                          
+                  Kappa : 0.65            
+                                          
+ Mcnemar's Test P-Value : 0.08897         
+                                          
+            Sensitivity : 0.8875          
+            Specificity : 0.7625          
+         Pos Pred Value : 0.7889          
+         Neg Pred Value : 0.8714          
+              Precision : 0.7889          
+                 Recall : 0.8875          
+                     F1 : 0.8353          
+             Prevalence : 0.5000          
+         Detection Rate : 0.4437          
+   Detection Prevalence : 0.5625          
+      Balanced Accuracy : 0.8250          
+                                          
+       'Positive' Class : 0               
+                                          
+[1] "Deceptive features:  c(chicago = 0.0159272925588506, locat = 0.00710895069339301, smell = 0.00473665477871823, elev = 0.00431418462325873, recent = 0.00391808987938761)"
+[1] "Truthful features:  c(chicago = 0.0259168876810099, smell = 0.00874356766151383, recent = 0.00767396348490268, luxuri = 0.00561895734900237, rude = 0.00407789542042422)"
+
+
+Forest Bigrams
+
+ ntrees = 500 ;  mtry = 45 
+Confusion Matrix and Statistics
+
+          Reference
+Prediction  0  1
+         0 75 25
+         1  5 55
+                                          
+               Accuracy : 0.8125          
+                 95% CI : (0.7433, 0.8698)
+    No Information Rate : 0.5             
+    P-Value [Acc > NIR] : 2.431e-16       
+                                          
+                  Kappa : 0.625           
+                                          
+ Mcnemar's Test P-Value : 0.0005226       
+                                          
+            Sensitivity : 0.9375          
+            Specificity : 0.6875          
+         Pos Pred Value : 0.7500          
+         Neg Pred Value : 0.9167          
+              Precision : 0.7500          
+                 Recall : 0.9375          
+                     F1 : 0.8333          
+             Prevalence : 0.5000          
+         Detection Rate : 0.4688          
+   Detection Prevalence : 0.6250          
+      Balanced Accuracy : 0.8125          
+                                          
+       'Positive' Class : 0               
+                                          
+[1] "Deceptive features:  c(chicago = 0.0175743946521021, locat = 0.00563605347007472, smell = 0.00439680243404423, elev = 0.00394248549845295, recent = 0.00379764095933093)"
+[1] "Truthful features:  c(chicago = 0.0363401908962244, smell = 0.0128680726206993, recent = 0.00996885389268785, luxuri = 0.00816423297791051, `hotel chicago` = 0.00696774884034059)"
+
+ ntrees = 1000 ;  mtry = 45 
+Confusion Matrix and Statistics
+
+          Reference
+Prediction  0  1
+         0 76 26
+         1  4 54
+                                          
+               Accuracy : 0.8125          
+                 95% CI : (0.7433, 0.8698)
+    No Information Rate : 0.5             
+    P-Value [Acc > NIR] : 2.431e-16       
+                                          
+                  Kappa : 0.625           
+                                          
+ Mcnemar's Test P-Value : 0.000126        
+                                          
+            Sensitivity : 0.9500          
+            Specificity : 0.6750          
+         Pos Pred Value : 0.7451          
+         Neg Pred Value : 0.9310          
+              Precision : 0.7451          
+                 Recall : 0.9500          
+                     F1 : 0.8352          
+             Prevalence : 0.5000          
+         Detection Rate : 0.4750          
+   Detection Prevalence : 0.6375          
+      Balanced Accuracy : 0.8125          
+                                          
+       'Positive' Class : 0               
+                                          
+[1] "Deceptive features:  c(chicago = 0.0179956764571553, locat = 0.00609825243017241, smell = 0.00515723112573752, luxuri = 0.00435277899505564, elev = 0.00382800676149834)"
+[1] "Truthful features:  c(chicago = 0.0356244489208092, smell = 0.0120960339077704, recent = 0.00916341537298573, luxuri = 0.008070990118256, `hotel chicago` = 0.00631203723492177)"
+
+ ntrees = 1500 ;  mtry = 30 
+Confusion Matrix and Statistics
+
+          Reference
+Prediction  0  1
+         0 77 25
+         1  3 55
+                                          
+               Accuracy : 0.825           
+                 95% CI : (0.7571, 0.8805)
+    No Information Rate : 0.5             
+    P-Value [Acc > NIR] : < 2.2e-16       
+                                          
+                  Kappa : 0.65            
+                                          
+ Mcnemar's Test P-Value : 7.229e-05       
+                                          
+            Sensitivity : 0.9625          
+            Specificity : 0.6875          
+         Pos Pred Value : 0.7549          
+         Neg Pred Value : 0.9483          
+              Precision : 0.7549          
+                 Recall : 0.9625          
+                     F1 : 0.8462          
+             Prevalence : 0.5000          
+         Detection Rate : 0.4813          
+   Detection Prevalence : 0.6375          
+      Balanced Accuracy : 0.8250          
+                                          
+       'Positive' Class : 0               
+                                          
+[1] "Deceptive features:  c(chicago = 0.0143755206817919, locat = 0.00536923939895659, smell = 0.00404602136505026, elev = 0.00366631093526994, luxuri = 0.00360832387464282)"
+[1] "Truthful features:  c(chicago = 0.0276570611369903, smell = 0.00945819827453575, recent = 0.00770699631545234, luxuri = 0.00651400060949406, `hotel chicago` = 0.0058592439424071)"
+
+ ntrees = 2000 ;  mtry = 30 
+Confusion Matrix and Statistics
+
+          Reference
+Prediction  0  1
+         0 77 27
+         1  3 53
+                                          
+               Accuracy : 0.8125          
+                 95% CI : (0.7433, 0.8698)
+    No Information Rate : 0.5             
+    P-Value [Acc > NIR] : 2.431e-16       
+                                          
+                  Kappa : 0.625           
+                                          
+ Mcnemar's Test P-Value : 2.679e-05       
+                                          
+            Sensitivity : 0.9625          
+            Specificity : 0.6625          
+         Pos Pred Value : 0.7404          
+         Neg Pred Value : 0.9464          
+              Precision : 0.7404          
+                 Recall : 0.9625          
+                     F1 : 0.8370          
+             Prevalence : 0.5000          
+         Detection Rate : 0.4813          
+   Detection Prevalence : 0.6500          
+      Balanced Accuracy : 0.8125          
+                                          
+       'Positive' Class : 0               
+                                          
+[1] "Deceptive features:  c(chicago = 0.014699059611726, locat = 0.005311960583258, smell = 0.00398915379487805, luxuri = 0.00380907381731118, elev = 0.00373007632367983)"
+[1] "Truthful features:  c(chicago = 0.0283997527183493, smell = 0.00932776292127801, recent = 0.00774501760057554, luxuri = 0.00674309547278602, `hotel chicago` = 0.0060003797836276)"
+
+

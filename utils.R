@@ -87,7 +87,7 @@ get_features_mnb <- function(train_model) {
     top5
   })
   
-  names(top5) <- c("deceptive", "truthful")
+  names(top5) <- c("truthful", "deceptive")
   top5
 }
 
@@ -102,15 +102,15 @@ get_features_lasso <- function(train_model, test_data) {
   coef_mat <- summary(coefs)
   order <- order(coef_mat[,"x"], decreasing = TRUE)
   
-  top5_true_mat <- coef_mat[order[1:5],]
+  top5_true_mat <- coef_mat[rev(order)[1:5],]
   top5_true_vals <- top5_true_mat[,"x"]
   names(top5_true_vals) <- coef_names[top5_true_mat[,"i"]]
   
-  top5_decep_mat <- coef_mat[rev(order)[1:5],]
+  top5_decep_mat <- coef_mat[order[1:5],]
   top5_decep_vals <- top5_decep_mat[,"x"]
   names(top5_decep_vals) <- coef_names[top5_decep_mat[,"i"]]
   
-  list(deceptive = top5_decep_vals, truthful = top5_true_vals)
+  list(truthful = top5_true_vals, deceptive = top5_decep_vals)
 }
 
 ## TREE
@@ -128,7 +128,20 @@ get_features_tree <- function(train_model) {
 
 ## FOREST
 
-# TO DO
+get_features_forest <- function(train_model_ls) {
+  
+  top5 <- lapply(train_model_ls, function(x) {
+    imps_true <- x[["finalModel"]][["importance"]][,1]
+    imps_decep <- x[["finalModel"]][["importance"]][,2]
+    
+    top5_true_vals <- imps_true[order(imps_true, decreasing = TRUE)[1:5]]
+    top5_decep_vals <- imps_decep[order(imps_decep, decreasing = TRUE)[1:5]]
+    
+    list(truthful = top5_true_vals, deceptive = top5_decep_vals)
+  })
+  
+  top5
+}
 
 
 # Performance measures ----------------------------------------------------
