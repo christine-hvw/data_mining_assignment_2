@@ -16,7 +16,10 @@ library(rpart)         # class. trees
 library(doParallel)    # parallel processing for RFs
 library(randomForest)  # random forests
 library(kableExtra)    # output tables
-
+library(dplyr)         # data manipulation
+library(forcats)       # handling factors
+library(ggplot2)       # feature plot
+library(patchwork)     # arrange plots
 source("utils.R")
 
 
@@ -438,4 +441,34 @@ cat("Tests between models (Unigrams vs. Unigrams, Bigrams vs. Bigrams)",
 ## Most important features ------------------------------------------------
 # plot top 5 features for fake and genuine reviews (for best performing model)
 
+top5_plot_dat <- data.frame("rev_type" = c(rep("deceptive", 5), 
+                                           rep("truthful", 5)),
+                            "value" = c(mnb_5features[["deceptive"]], 
+                                        mnb_5features[["truthful"]]),
+                            "feature" = c(names(mnb_5features[["deceptive"]]),
+                                          names(mnb_5features[["truthful"]])))
+
+p1 <- top5_plot_dat %>% 
+  filter(rev_type == "deceptive") %>% 
+  ggplot(aes(x = value, y = fct_reorder(feature, value))) +
+  geom_col(width = .5, fill = "lightblue") +
+  labs(x = "", y = "Feature", title = "Deceptive reviews") +
+  scale_x_continuous(limits = c(0, 0.04)) +
+  theme_minimal() +
+  theme(title = element_text(size = 10))
+
+
+p2 <- top5_plot_dat %>% 
+  filter(rev_type == "truthful") %>% 
+  ggplot(aes(x = value, y = fct_reorder(feature, value))) +
+  geom_col(width = .5, fill = "goldenrod") +
+  labs(x = "Importance", y = "Feature", title = "Truthful reviews") +
+  scale_x_continuous(limits = c(0, 0.04)) +
+  theme_minimal() +
+  theme(title = element_text(size = 10))
+
+p1 / p2
+
+ggsave("results/feature_plot.png", dpi = 600,
+       height = 4.5, width = 4.5)
 
