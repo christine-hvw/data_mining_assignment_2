@@ -172,5 +172,8 @@ test_mcnemar <- function(predicted_a, predicted_b, observed) {
   class_a <- predicted_a == observed
   class_b <- predicted_b == observed
   
-  mcnemar.test(x = table(class_a, class_b))
+  chi2 <- mcnemar.test(x = table(class_a, class_b))$statistic
+  pval <- mcnemar.test(x = table(class_a, class_b))$p.value
+  
+  list(chi2 = chi2, pval = pval)
 }

@@ -1,0 +1,22 @@
+Tests within models (Unigrams vs. Uni+Bigrams)
+
+
+             Chi2     p-value
+------  ---------  ----------
+MNB      1.066667   0.3016996
+LASSO    2.285714   0.1305700
+Tree     0.000000   1.0000000
+RF       0.000000   1.0000000
+Tests between models (Unigrams vs. Unigrams, Bigrams vs. Bigrams)
+
+
+         MNB   LASSO                    Tree                      RF                       MNB2   LASSO2                   Tree2                    RF2                    
+-------  ----  -----------------------  ------------------------  -----------------------  -----  -----------------------  -----------------------  -----------------------
+MNB      NA    chi2 = 3.115 p = 0.078   chi2 = 18.15 p = 0        chi2 = 1.885 p = 0.17    NA     NA                       NA                       NA                     
+LASSO    NA    NA                       chi2 = 12.023 p = 0.001   chi2 = 0.042 p = 0.838   NA     NA                       NA                       NA                     
+Tree     NA    NA                       NA                        chi2 = 14.205 p = 0      NA     NA                       NA                       NA                     
+RF       NA    NA                       NA                        NA                       NA     NA                       NA                       NA                     
+MNB2     NA    NA                       NA                        NA                       NA     chi2 = 3.115 p = 0.078   chi2 = 14.255 p = 0      chi2 = 0.375 p = 0.54  
+LASSO2   NA    NA                       NA                        NA                       NA     NA                       chi2 = 8.308 p = 0.004   chi2 = 1.136 p = 0.286 
+Tree2    NA    NA                       NA                        NA                       NA     NA                       NA                       chi2 = 14.769 p = 0    
+RF2      NA    NA                       NA                        NA                       NA     NA                       NA                       NA                     

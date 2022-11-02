@@ -15,6 +15,7 @@ library(glmnet)        # lasso regression
 library(rpart)         # class. trees
 library(doParallel)    # parallel processing for RFs
 library(randomForest)  # random forests
+library(kableExtra)    # output tables
 
 source("utils.R")
 
@@ -308,6 +309,8 @@ cat("Forest Unigrams",
     ), "\n", file = "results/results.txt", sep = "\n", append = TRUE
 )
 
+# save predictions of best performing rf (ntree=500)
+rf_best_predict <- rf_predict_ls[[1]]
 
 ### Bigrams
 
@@ -362,6 +365,8 @@ cat("Forest Bigrams",
     ), "\n", file = "results/results.txt", sep = "\n", append = TRUE
 )
 
+# save predictions of best performing rf (ntree=1500)
+rf2_best_predict <- rf2_predict_ls[[3]]
 
 # Model comparison --------------------------------------------------------
 
@@ -370,33 +375,67 @@ cat("Forest Bigrams",
 # compare accuracy, precision, recall and F1 score
 
 best_predictions_names <- c("mnb_predict", "mnb2_predict", "lasso_predict", "lasso2_predict",
-                            "tree_predict", "tree2_predict") # run RANDOM FOREST again and add!
+                            "tree_predict", "tree2_predict", "rf_best_predict", "rf2_best_predict") 
 
 best_predictions <- mget(best_predictions_names, envir = globalenv())
 
 all_measures <- lapply(best_predictions, get_measures, observed = labels[-train_partition])
 
-all_measures_df <- as.data.frame(do.call("rbind", all_measures))
+all_measures <- as.data.frame(do.call("rbind", all_measures))
 
+cat("Performance comparison table",
+    capture.output(kable(all_measures, format = "simple")),
+    file = "results/comparison_table.txt", sep = "\n", append = FALSE)
 
-# conduct statistical test for accuracy
+# Conduct statistical test for accuracy
 
 # Tests within models (unigrams vs. uni+bigrams)
-for(i in list(c(1,2), c(3,4), c(5,6))) {
-  print(names(best_predictions[i]))
-  print(test_mcnemar(best_predictions[[i[1]]], best_predictions[[i[2]]],
-                     observed = labels[-train_partition]))
+within_models <- list(c(1,2), c(3,4), c(5,6), c(7,8))
+
+tab_within <- matrix(nrow = 4, ncol = 2, byrow = TRUE,
+                     dimnames = list(c("MNB", "LASSO", "Tree", "RF"),
+                                     c("Chi2", "p-value")))
+
+for (i in 1:nrow(tab_within)) {
+  m <- within_models[[i]]
+  tab_within[i,1] <- test_mcnemar(best_predictions[[m[1]]], best_predictions[[m[2]]],
+                                  observed = labels[-train_partition])$chi2
+  tab_within[i,2] <- test_mcnemar(best_predictions[[m[1]]], best_predictions[[m[2]]],
+                                  observed = labels[-train_partition])$pval
 }
+
+cat("Tests within models (Unigrams vs. Uni+Bigrams)",
+    capture.output(kable(tab_within, format = "simple")),
+    file = "results/test_tables.txt", sep = "\n", append = TRUE
+)
+
 
 # Tests between different model classes
-for(i in list(c(1,3), c(1,5), c(3,5),
-              c(2,4), c(2,6), c(4,6))) {
-  print(names(best_predictions[i]))
-  print(test_mcnemar(best_predictions[[i[1]]], best_predictions[[i[2]]],
-                     observed = labels[-train_partition]))
+between_models <- list(c(1,3), c(1,5), c(1,7), c(3,5), c(3,7), c(5,7),
+                       c(2,4), c(2,6), c(2,8), c(4,6), c(4,8), c(6,8))
+
+tab_between <- as.data.frame(matrix(nrow = 8, ncol = 8))
+rownames(tab_between) <- colnames(tab_between) <- c("MNB", "MNB2", "LASSO", "LASSO2",
+                                                    "Tree", "Tree2", "RF", "RF2")
+
+for (i in between_models) {
+  chi2 <- test_mcnemar(best_predictions[[i[1]]], best_predictions[[i[2]]],
+                       observed = labels[-train_partition])$chi2
+  pval <- test_mcnemar(best_predictions[[i[1]]], best_predictions[[i[2]]],
+                       observed = labels[-train_partition])$pval
+  
+  tab_between[i[1], i[2]] <- paste("chi2 =", round(chi2, 3),
+                                   "p =", round(pval, 3))
 }
 
+tab_between <- tab_between[c(1,3,5,7,2,4,6,8), c(1,3,5,7,2,4,6,8)]
+
+cat("Tests between models (Unigrams vs. Unigrams, Bigrams vs. Bigrams)",
+    capture.output(kable(tab_between, format = "simple")),
+    file = "results/test_tables.txt", sep = "\n", append = TRUE
+)
+
 ## Most important features ------------------------------------------------
-# list top 5 features for fake and genuine reviews (for best performing model)
+# plot top 5 features for fake and genuine reviews (for best performing model)
 
 
